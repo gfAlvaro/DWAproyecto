@@ -1,0 +1,51 @@
+@use '../../variables.scss' as *;
+
+$margenExterior: 10em;
+
+header {
+    color: $colorSecundario;
+    background-color: $colorPrimario;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    flex-direction: flex-center;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px;
+    margin: -10px;
+}
+
+header img {
+    width: 80px;
+    height: auto;
+    margin-left: $margenExterior;
+    margin-right: auto;
+}
+
+header ul {
+    display: flex;
+    flex-direction: row;
+}
+
+ul li {
+    list-style-type: none;
+    padding: 2em;
+    text-align: center;
+}
+
+header a {
+    color: $colorSecundario;
+    background-color: $colorPrimario;    
+}
+
+header>a {
+    border: 1px solid white;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    padding: 1.5em;
+    border-radius: 1em;
+    margin-right: $margenExterior;
+    margin-left: auto;
+}
