@@ -1,7 +1,5 @@
 @use '../../variables.scss' as *;
 
-$margenExterior: 10em;
-
 header {
     color: $colorSecundario;
     background-color: $colorPrimario;
@@ -11,13 +9,12 @@ header {
     flex-direction: flex-center;
     align-items: center;
     justify-content: center;
-
     padding: 10px;
     margin: -10px;
 }
 
 header img {
-    width: 80px;
+    width: 80px !important;
     height: auto;
     margin-left: $margenExterior;
     margin-right: auto;
@@ -29,7 +26,6 @@ header ul {
 }
 
 ul li {
-    list-style-type: none;
     padding: 2em;
     text-align: center;
 }

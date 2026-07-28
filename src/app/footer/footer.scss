@@ -1,0 +1,64 @@
+@use '../../variables.scss' as *;
+
+footer {
+    color: $colorFooter;
+    display: flex;
+    flex-direction: column;
+    margin: -8px;
+    background-color: $colorPrimario;
+}
+
+.footer-main {
+    width: 37%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $colorSecundario;
+    background-color: $colorPrimario;
+    padding-top: 0.5em;
+}
+
+.footer-main img{
+    width: 80px !important;
+    height: auto;
+    margin-left: 10.5em;
+    margin-right: auto;
+}
+
+.footer-after {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-left: 10.5em;
+    padding-right: auto;
+    color: $colorFooterAfter !important;
+    background-color: $footerAfter;
+    padding-bottom: 0.5em;
+}
+
+.footer-after div {
+    display: flex;
+    flex-direction: row;
+}
+
+.footer-after div p{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.footer-after ul {
+    display: flex;
+    flex-direction: flex-start;
+    margin-right: 21em;
+    margin-left: auto;
+}
+
+.footer-after ul li {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+footer-after img{
+    width: 21px !important;
+    height: auto;
+}
