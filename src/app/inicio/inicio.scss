@@ -1,0 +1,47 @@
+@use '../../variables.scss' as *;
+
+$margin: 40px;
+
+article {
+    display: flex;
+}
+
+article img {
+    width: 600px;
+    height: auto;
+}
+
+article a {
+    background-color: $colorPrimario;
+    padding: 10px;
+}
+
+article .columna p {
+    margin-bottom: $margin;
+}
+
+.section1 {
+    margin-top:10px;
+}
+
+.section1, .section3 {
+    margin-left: -10px;
+    margin-right: $margenExterior;
+}
+
+.section2 {
+    margin-right: -10px;
+    margin-left: $margenExterior;
+}
+
+.section1 .columna, .section3 .columna {
+    margin-left: $margin;
+    margin-right: auto;
+    align-content: center;
+}
+
+.section2 .columna {
+    margin-left: auto;
+    margin-right: $margin;
+    align-content: center;
+}
