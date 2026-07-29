@@ -13,7 +13,6 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: $colorSecundario;
     background-color: $colorPrimario;
     padding-top: 0.5em;
 }
@@ -25,15 +24,23 @@ footer {
     margin-right: auto;
 }
 
+.footer-main a {
+    color: $colorFooter;
+}
+
 .footer-after {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: roaw;
     padding-left: 10.5em;
     padding-right: auto;
     color: $colorFooterAfter !important;
     background-color: $footerAfter;
     padding-bottom: 0.5em;
+}
+
+.footer-after a {
+    color: $colorFooterAfter;
 }
 
 .footer-after div {
