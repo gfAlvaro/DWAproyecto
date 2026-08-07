@@ -4,7 +4,6 @@ footer {
     color: $colorFooter;
     display: flex;
     flex-direction: column;
-    margin: -8px;
     background-color: $colorPrimario;
 }
 
@@ -29,11 +28,8 @@ footer {
 }
 
 .footer-after {
-    width: 100%;
     display: flex;
-    flex-direction: roaw;
     padding-left: 10.5em;
-    padding-right: auto;
     color: $colorFooterAfter !important;
     background-color: $footerAfter;
     padding-bottom: 0.5em;
@@ -50,7 +46,6 @@ footer {
 
 .footer-after div p{
     margin-left: 5px;
-    margin-right: 5px;
 }
 
 .footer-after ul {
@@ -61,7 +56,6 @@ footer {
 }
 
 .footer-after ul li {
-    margin-right: 5px;
     margin-left: 5px;
 }
 

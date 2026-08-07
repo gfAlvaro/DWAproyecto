@@ -3,18 +3,16 @@
 header {
     color: $colorSecundario;
     background-color: $colorPrimario;
-    width: 100%;
     height: 80px;
     display: flex;
     flex-direction: flex-center;
     align-items: center;
     justify-content: center;
     padding: 10px;
-    margin: -10px;
 }
 
 header img {
-    width: 80px !important;
+    width: 80px;
     height: auto;
     margin-left: $margenExterior;
     margin-right: auto;
@@ -22,12 +20,10 @@ header img {
 
 header ul {
     display: flex;
-    flex-direction: row;
 }
 
 ul li {
     padding: 2em;
-    text-align: center;
 }
 
 header a {

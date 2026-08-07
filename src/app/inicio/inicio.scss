@@ -22,7 +22,7 @@ article .columna p {
 }
 
 .section1 {
-    margin-top:10px;
+    margin-top: -10px;
 }
 
 .section1, .section3 {
@@ -31,7 +31,6 @@ article .columna p {
 }
 
 .section2 {
-    margin-right: -10px;
     margin-left: $margenExterior;
 }
 
