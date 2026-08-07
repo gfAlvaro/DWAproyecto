@@ -17,11 +17,11 @@ export const appConfig: ApplicationConfig = {
   ]
 };
 
-
 @Component({
   selector: 'app-contact',
   imports: [ReactiveFormsModule],
-  templateUrl: './contacto.html'
+  templateUrl: './contacto.html',
+  styleUrls: ['./contacto.scss']
 })
 
 export class Contacto {
