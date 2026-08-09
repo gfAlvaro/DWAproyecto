@@ -11,7 +11,6 @@ process.on('uncaughtException', (err) => {
   console.error('❌ SE CAYÓ EL SERVIDOR POR UN ERROR NO CONTROLADO:', err);
 });
 
-
 // Configurar conexión a MySQL
 const db = mysql.createConnection({
   host: 'localhost',
@@ -26,18 +25,8 @@ db.connect(err => {
   console.log('Conectado a MySQL con éxito');
 });
 
-// Endpoint para obtener datos (Ejemplo: usuarios)
-/*app.get('/api/clientes', (req, res) => {
-  db.query('SELECT * FROM clientes', (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.json(results);
-  });
-});*/
-
 app.listen(3000, () => console.log('Servidor Node.js corriendo en el puerto 3000'));
 
-
-// Reemplaza tu endpoint actual por este:
 app.get('/api/clientes', (req, res) => {
   console.log('--- 📥 Petición recibida desde Angular en /api/clientes ---');
 
