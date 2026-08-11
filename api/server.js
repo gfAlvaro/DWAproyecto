@@ -45,3 +45,21 @@ app.get('/api/clientes', (req, res) => {
     res.json(results);
   });
 });
+
+app.get('/api/productos', (req, res) => {
+  console.log('--- 📥 Petición recibida desde Angular en /api/productos ---');
+
+  db.query('SELECT * FROM productos', (err, results) => {
+    if (err) {
+      console.error("❌ ERROR REAL EN MYSQL:", err.message);
+      return res.status(500).json({ 
+        mensaje: "Error en la base de datos", 
+        errorDetallado: err.message,
+        codigoError: err.code 
+      });
+    }
+    
+    console.log(`✅ Consulta exitosa. Se encontraron ${results.length} productos.`);
+    res.json(results);
+  });
+});

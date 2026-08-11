@@ -5,39 +5,48 @@ header {
     background-color: $colorPrimario;
     height: 80px;
     display: flex;
-    flex-direction: flex-center;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
-header img {
+header>a:first-child {
+    margin-left: $margenExterior;
+    margin-right: auto;   
+}
+
+header a:first-child img {
     width: 80px;
     height: auto;
-    margin-left: $margenExterior;
+}
+
+header nav {
+    margin-left: auto;
     margin-right: auto;
 }
 
-header ul {
+header nav ul {
     display: flex;
 }
 
 ul li {
-    padding: 2em;
+    padding: 2rem;
+    text-align: center;
 }
 
-header a {
+header a:last-child {
     color: $colorSecundario;
     background-color: $colorPrimario;    
 }
 
-header>a {
+header>a:last-child {
     border: 1px solid white;
     text-align: center;
     align-content: center;
     justify-content: center;
     padding: 1.5em;
     border-radius: 1em;
+    margin-left: auto;   
     margin-right: $margenExterior;
-    margin-left: auto;
 }

@@ -1,18 +1,21 @@
-import { Component } from '@angular/core';
-import { ApiService } from '../services/api';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ApiService } from '../core/services/api';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-api-mensajes',
-  imports: [],
-  templateUrl: './api-mensajes.html',
-  styleUrl: './api-mensajes.scss',
+  selector: 'app-api-messages',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './api-mensajes.html'
 })
-export class ApiMensajes {
-  constructor(private api: ApiService) {}
+export class AppComponent implements OnInit {
 
-ngOnInit() {
-  this.api.prueba().subscribe(console.log);
+  constructor(private dataService: ApiService) {}
+  clientes$!: Observable<any[]>;
+
+  ngOnInit() {
+  this.clientes$! = this.dataService.getClientes();
+  }
+  
 }
-}
-
-

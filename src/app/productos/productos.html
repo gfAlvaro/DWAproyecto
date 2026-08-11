@@ -1,1 +1,17 @@
-<p>productos works!</p>
+<h1>Nuestros productos</h1>
+<div class="productos-grid">
+  <!-- El pipe | async se encarga de pintar los datos en cuanto llegan -->
+  @for (producto of (productos$ | async); track producto.productoID) {
+    <div class="producto">
+      <a href="{{ producto.urlProducto }}" target="_blank">
+      <img src="{{ producto.pathImagen }}" alt="{{ producto.nombreProducto }}">
+      </a>
+      <a href="{{ producto.urlProducto }}" target="_blank">
+        <h3>{{ producto.nombreProducto }}</h3>
+      </a>
+      <p>{{ producto.precio }} €</p>
+    </div>
+  } @empty {
+    <p>Próximamente...</p>
+  }
+</div>

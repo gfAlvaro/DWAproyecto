@@ -1,1 +1,9 @@
-<p>api-mensajes works!</p>
+<h1>Lista de Clientes</h1>
+<ul>
+  <!-- El pipe | async se encarga de pintar los datos en cuanto llegan -->
+  @for (cliente of (clientes$ | async); track cliente.clienteID) {
+    <li>{{ cliente.nombre }} {{ cliente.apellido }}</li>
+  } @empty {
+    <li>Cargando clientes o lista vacía...</li>
+  }
+</ul>
