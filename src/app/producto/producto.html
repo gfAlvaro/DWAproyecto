@@ -1,0 +1,12 @@
+<h1>{{ producto.nombre }}</h1>
+
+<img
+  [src]="producto.imagen"
+  [alt]="producto.nombre"
+/>
+
+<p>{{ producto.descripcion }}</p>
+
+<strong>
+  {{ producto.precio | currency:'EUR' }}
+</strong>

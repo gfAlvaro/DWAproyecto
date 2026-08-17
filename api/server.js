@@ -1,7 +1,9 @@
+require('dotenv').config();
+
+
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-
 const app = express();
 app.use(cors()); // Permite que Angular acceda a la API
 app.use(express.json());
@@ -13,11 +15,11 @@ process.on('uncaughtException', (err) => {
 
 // Configurar conexión a MySQL
 const db = mysql.createConnection({
-  host: 'localhost',
-  port: 3306,             // <--- El puerto va aquí como un número
-  user: 'alvarogfv1-2526_',
-  password: 'PDBdozprztg4@45!',
-  database: 'alvarogfv1-2526_'
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
 db.connect(err => {
@@ -62,4 +64,41 @@ app.get('/api/productos', (req, res) => {
     console.log(`✅ Consulta exitosa. Se encontraron ${results.length} productos.`);
     res.json(results);
   });
+});
+
+app.get('/api/productos/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+
+        const [rows] = await db.execute(
+            `SELECT
+                productoID,
+                nombreProducto,
+                slug,
+                descripcion,
+                precio,
+                stock,
+                fechaAgreado,
+                pathImagen
+             FROM productos
+             WHERE slug = ?
+             LIMIT 1`,
+            [slug]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({
+                mensaje: 'Producto no encontrado'
+            });
+        }
+
+        res.json(rows[0]);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            mensaje: 'Error al obtener el producto'
+        });
+    }
 });
