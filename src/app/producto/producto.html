@@ -1,12 +1,39 @@
-<h1>{{ producto.nombre }}</h1>
+<section class="producto" *ngIf="producto">
 
-<img
-  [src]="producto.imagen"
-  [alt]="producto.nombre"
-/>
+  <div class="producto-imagen">
 
-<p>{{ producto.descripcion }}</p>
+    <img
+      *ngIf="producto.pathImagen"
+      [src]="producto.pathImagen"
+      [alt]="producto.nombreProducto"
+    >
 
-<strong>
-  {{ producto.precio | currency:'EUR' }}
-</strong>
+    <div *ngIf="!producto.pathImagen" class="sin-imagen">
+      Sin imagen disponible
+    </div>
+
+  </div>
+
+  <div class="producto-info">
+
+    <h1>{{ producto.nombreProducto }}</h1>
+
+    <p class="descripcion">
+      {{ producto.descripcion }}
+    </p>
+
+    <p class="precio">
+      {{ producto.precio }} €
+    </p>
+
+    <p *ngIf="producto.stock > 0" class="stock">
+      Stock disponible: {{ producto.stock }}
+    </p>
+
+    <p *ngIf="producto.stock === 0" class="agotado">
+      Producto agotado
+    </p>
+
+  </div>
+
+</section>

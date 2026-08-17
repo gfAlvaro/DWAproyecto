@@ -1,19 +1,18 @@
 require('dotenv').config();
 
-
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const app = express();
-app.use(cors()); // Permite que Angular acceda a la API
+const path = require('path');
+
+app.use(cors());
 app.use(express.json());
 
-// Añade esto al inicio para capturar cualquier fallo global que tire el servidor
 process.on('uncaughtException', (err) => {
   console.error('❌ SE CAYÓ EL SERVIDOR POR UN ERROR NO CONTROLADO:', err);
 });
 
-// Configurar conexión a MySQL
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
@@ -48,6 +47,7 @@ app.get('/api/clientes', (req, res) => {
   });
 });
 
+// OBTENER TODOS LOS PRODUCTOS
 app.get('/api/productos', (req, res) => {
   console.log('--- 📥 Petición recibida desde Angular en /api/productos ---');
 
@@ -66,39 +66,81 @@ app.get('/api/productos', (req, res) => {
   });
 });
 
-app.get('/api/productos/:slug', async (req, res) => {
-    try {
-        const { slug } = req.params;
+// OBTENER UN PRODUCTO POR SLUG
+app.get('/api/productos/:slug', (req, res) => {
 
-        const [rows] = await db.execute(
-            `SELECT
-                productoID,
-                nombreProducto,
-                slug,
-                descripcion,
-                precio,
-                stock,
-                fechaAgreado,
-                pathImagen
-             FROM productos
-             WHERE slug = ?
-             LIMIT 1`,
-            [slug]
+  console.log(
+    '--- 📥 Petición recibida en /api/productos/:slug ---'
+  );
+
+  const { slug } = req.params;
+
+  console.log(
+    '🔎 Buscando producto con slug:',
+    slug
+  );
+
+  const sql = `
+    SELECT
+      productoID,
+      nombreProducto,
+      slug,
+      descripcion,
+      precio,
+      stock,
+      pathImagen
+    FROM productos
+    WHERE slug = ?
+    LIMIT 1
+  `;
+
+  db.query(
+    sql,
+    [slug],
+    (err, results) => {
+
+      if (err) {
+
+        console.error(
+          '❌ ERROR REAL EN MYSQL:',
+          err.message
         );
 
-        if (rows.length === 0) {
-            return res.status(404).json({
-                mensaje: 'Producto no encontrado'
-            });
-        }
-
-        res.json(rows[0]);
-
-    } catch (error) {
-        console.error(error);
-
-        res.status(500).json({
-            mensaje: 'Error al obtener el producto'
+        return res.status(500).json({
+          mensaje: 'Error en la base de datos',
+          errorDetallado: err.message,
+          codigoError: err.code
         });
+      }
+
+      if (results.length === 0) {
+
+        console.log(
+          '⚠️ Producto no encontrado:',
+          slug
+        );
+
+        return res.status(404).json({
+          mensaje: 'Producto no encontrado'
+        });
+      }
+
+      console.log(
+        '✅ Producto encontrado:',
+        results[0].nombreProducto
+      );
+
+      res.json(results[0]);
     }
+  );
+});
+
+// Servir Angular desde httpdocs
+const angularPath = path.join(__dirname, 'httpdocs');
+
+app.use(express.static(angularPath));
+
+// Fallback para Angular Router
+app.get('/{*splat}', (req, res) => {
+  res.sendFile(path.join(angularPath, 'index.html'));
 });
