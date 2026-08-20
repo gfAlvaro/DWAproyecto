@@ -1,0 +1,12 @@
+section.producto {
+  padding-top: 20px;
+  display: flex;
+  justify-content: center; /* centra horizontalmente */
+  align-items: center; /* centra verticalmente*/
+}
+
+.producto .producto-imagen img {
+  width: 400px !important;
+  height: auto !important;
+    padding-right: 20px;
+}

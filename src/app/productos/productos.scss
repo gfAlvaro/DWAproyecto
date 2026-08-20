@@ -15,6 +15,7 @@ h1 {
   padding: 1rem;
   border-radius: 5px;
   transition: transform 0.2s ease-in-out;
+  text-align: center;
 
   &:hover {
     transform: scale(1.05);
@@ -25,4 +26,10 @@ h1 {
 h3 {
     color: #333;
     font-size: 1.2rem;
+}
+
+.productos-grid .producto img {
+  width: 400px !important;
+  height: auto !important;
+  text-align: center !important;
 }
