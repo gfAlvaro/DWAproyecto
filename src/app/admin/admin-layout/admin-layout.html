@@ -1,0 +1,37 @@
+<div class="admin-layout">
+
+  <aside class="sidebar">
+    <h2>Administración</h2>
+
+    <nav>
+      <a routerLink="/admin/dashboard">
+        Dashboard
+      </a>
+      
+      <a routerLink="/admin/clientes">
+        Clientes
+      </a>
+
+      <a routerLink="/admin/productos">
+        Productos
+      </a>
+
+      <a routerLink="/admin/pedidos">
+        Pedidos
+      </a>
+    </nav>
+  </aside>
+
+  <div class="admin-content">
+
+    <header class="admin-header">
+      <h1>Panel de administración</h1>
+    </header>
+
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+</div>
