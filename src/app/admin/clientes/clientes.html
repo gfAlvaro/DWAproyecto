@@ -1,1 +1,27 @@
-<p>clientes works!</p>
+<h2>Clientes</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellidos</th>
+      <th>email</th>
+      <th>Telefono</th>
+      <th>Direccion</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  @for (cliente of (clientes$ | async ); track cliente.clienteID) {
+      <tr>
+        <td>{{ cliente['clienteID'] }}</td>
+        <td>{{ cliente['nombre'] }}</td>
+        <td>{{ cliente['apellido'] }}</td>
+        <td>{{ cliente['email'] }}</td>
+        <td>{{ cliente['telefono'] }}</td>
+        <td>{{ cliente['direccion'] }}</td> 
+      </tr>
+    }
+  </tbody>
+</table>

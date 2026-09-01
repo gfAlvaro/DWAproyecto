@@ -1,0 +1,117 @@
+<h2>Editar producto</h2>
+
+@if (cargando) {
+
+  <p>Cargando producto...</p>
+
+} @else {
+
+  @if (error) {
+    <p class="error">
+      {{ error }}
+    </p>
+  }
+
+  @if (mensaje) {
+    <p class="mensaje">
+      {{ mensaje }}
+    </p>
+  }
+
+  <form
+    [formGroup]="formulario"
+    (ngSubmit)="guardar()"
+  >
+
+    <div>
+      <label for="nombreProducto">
+        Nombre
+      </label>
+
+      <input
+        id="nombreProducto"
+        type="text"
+        formControlName="nombreProducto"
+      >
+    </div>
+
+    <div>
+      <label for="slug">
+        Slug
+      </label>
+
+      <input
+        id="slug"
+        type="text"
+        formControlName="slug"
+      >
+    </div>
+
+    <div>
+      <label for="descripcion">
+        Descripción
+      </label>
+
+      <textarea
+        id="descripcion"
+        formControlName="descripcion"
+      ></textarea>
+    </div>
+
+    <div>
+      <label for="precio">
+        Precio
+      </label>
+
+      <input
+        id="precio"
+        type="number"
+        step="0.01"
+        formControlName="precio"
+      >
+    </div>
+
+    <div>
+      <label for="stock">
+        Stock
+      </label>
+
+      <input
+        id="stock"
+        type="number"
+        formControlName="stock"
+      >
+    </div>
+
+    <div>
+      <label for="pathImagen">
+        Imagen
+      </label>
+
+      <input
+        id="pathImagen"
+        type="text"
+        formControlName="pathImagen"
+      >
+    </div>
+
+    <div>
+
+      <button
+        type="submit"
+        [disabled]="guardando"
+      >
+        {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+
+      <button
+        type="button"
+        (click)="cancelar()"
+      >
+        Cancelar
+      </button>
+
+    </div>
+
+  </form>
+}

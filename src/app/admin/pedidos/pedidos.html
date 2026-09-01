@@ -1,1 +1,30 @@
-<p>pedidos works!</p>
+<h2>Pedidos</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>ID cliente</th>
+      <th>fecha pedido</th>
+      <th>total</th>
+      <th>estado</th>
+      <th>acciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  @for (pedido of (pedidos$ | async ); track pedido.pedidoID) {
+      <tr>
+        <td>{{ pedido['pedidoID'] }}</td>
+        <td>{{ pedido['clienteID'] }}</td>
+        <td>{{ pedido['fechaPedido'] }}</td>
+        <td>{{ pedido['total'] }}</td>
+        <td>{{ pedido['estado'] }}</td>
+        <td>
+          <button>Editar</button>
+          <button>Borrar</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

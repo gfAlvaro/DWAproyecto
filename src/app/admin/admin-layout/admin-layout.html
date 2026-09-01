@@ -7,12 +7,12 @@
       <a routerLink="/admin/dashboard">
         Dashboard
       </a>
-      
+
       <a routerLink="/admin/clientes">
         Clientes
       </a>
 
-      <a routerLink="/admin/productos">
+      <a routerLink="/admin/admin-productos">
         Productos
       </a>
 
@@ -29,7 +29,7 @@
     </header>
 
     <main>
-      <router-outlet></router-outlet>
+      <router-outlet #outlet="outlet"></router-outlet>
     </main>
 
   </div>

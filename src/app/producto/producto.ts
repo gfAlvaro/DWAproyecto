@@ -11,6 +11,7 @@ import { ApiService } from '../core/services/api';
   styleUrl: './producto.scss'
 })
 export class Producto implements OnInit {
+[x: string]: any;
 
   producto: any = null;
 

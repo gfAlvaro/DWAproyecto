@@ -1,11 +1,22 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { Component, OnInit } from '@angular/core';
+import { AdminPedidosService } from '../../core/services/admin-pedidos.service';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-pedidos',
-  imports: [],
+  selector: 'app-admin-pedidos',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './pedidos.html',
-  styleUrl: './pedidos.scss',
+  styleUrl: './pedidos.scss'
 })
-export class Pedidos {
+export class AdminPedidos implements OnInit {
 
+  constructor(private dataService: AdminPedidosService) {}
+  pedidos$!: Observable<any[]>;
+
+  ngOnInit() {
+  this.pedidos$! = this.dataService.obtenerPedidos();
+  }
 }

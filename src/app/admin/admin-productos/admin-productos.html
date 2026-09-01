@@ -1,0 +1,28 @@
+<h2>Productos</h2>
+
+<p>Total: {{ productos.length }}</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (producto of productos; track producto['productoID']) {
+      <tr>
+        <td>{{ producto['productoID'] }}</td>
+        <td>{{ producto['nombreProducto'] }}</td>
+        <td>{{ producto['precio'] }}</td>
+        <td>{{ producto['stock'] }}</td>
+        <td><a [routerLink]="['/admin/editar-producto', producto['productoID']]">Editar</a> 
+            <a [routerLink]="['/admin/eliminar-producto', producto['productoID']]">Eliminar</a></td>
+      </tr>
+    }
+  </tbody>
+</table>

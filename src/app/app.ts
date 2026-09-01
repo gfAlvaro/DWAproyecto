@@ -1,12 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Header } from "./header/header";
-import { Footer } from "./footer/footer";
 import { HttpClient } from '@angular/common/http';
+import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
