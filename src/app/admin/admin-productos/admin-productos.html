@@ -23,8 +23,50 @@
         <td>{{ producto['precio'] }}</td>
         <td>{{ producto['stock'] }}</td>
         <td><a [routerLink]="['/admin/editar-producto', producto['productoID']]">Editar</a> 
-            <a [routerLink]="['/admin/eliminar-producto', producto['productoID']]">Eliminar</a></td>
-      </tr>
+            <button
+              type="button"
+              class="btn-eliminar"
+              (click)="abrirModalEliminar(producto)">
+              Eliminar
+            </button> </td>
+</tr>
     }
   </tbody>
 </table>
+@if (mostrarModalEliminar) {
+  <div class="modal-overlay" (click)="cerrarModalEliminar()">
+
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()">
+
+      <h3>Eliminar producto</h3>
+
+      <p>
+        ¿Estás seguro de que quieres eliminar
+        <strong>{{ productoAEliminar?.['nombreProducto'] }}</strong>?
+      </p>
+
+      <p class="texto-aviso">
+        Esta acción no se puede deshacer.
+      </p>
+
+      <div class="modal-acciones">
+        <button
+          type="button"
+          class="btn-cancelar"
+          (click)="cerrarModalEliminar()">
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn-confirmar-eliminar"
+          (click)="confirmarEliminar()">
+          Eliminar
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

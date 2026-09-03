@@ -12,7 +12,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './admin-productos.scss'
 })
 export class AdminProductos implements OnInit {
-
+  mostrarModalEliminar = false;
+  productoAEliminar: Producto | null = null;
   productos: Producto[] = [];
   cargando = false;
   error = '';
@@ -48,4 +49,38 @@ export class AdminProductos implements OnInit {
 
       });
   }
+
+abrirModalEliminar(producto: Producto): void {
+  this.productoAEliminar = producto;
+  this.mostrarModalEliminar = true;
+}
+
+cerrarModalEliminar(): void {
+  this.mostrarModalEliminar = false;
+  this.productoAEliminar = null;
+}
+
+confirmarEliminar(): void {
+  if (!this.productoAEliminar) {
+    return;
+  }
+
+  const id = this.productoAEliminar['productoID'];
+
+  this.adminProductosService.eliminarProducto(id).subscribe({
+    next: () => {
+      this.productos = this.productos.filter(
+        producto => producto['productoID'] !== id
+      );
+
+      this.cerrarModalEliminar();
+    },
+
+    error: (error) => {
+      console.error('Error al eliminar el producto:', error);
+      alert('No se ha podido eliminar el producto.');
+    }
+  });
+}
+
 }
