@@ -31,12 +31,12 @@ obtenerProductos(): Observable<Producto[]> {
   // =========================
   // CREAR
   // =========================
-  crearProducto(producto: Producto): Observable<any> {
-    return this.http.post(
-      this.apiUrl,
-      producto
-    );
-  }
+  crearProducto(formData: FormData) {
+  return this.http.post(
+    '/api/productos',
+    formData
+  );
+}
 
   // =========================
   // ACTUALIZAR

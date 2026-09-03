@@ -1,1 +1,178 @@
-<p>crear-producto works!</p>
+<div class="nuevo-producto">
+
+  <h2>Añadir producto</h2>
+  @if (error) {
+    <div class="mensaje-error">
+      {{ error }}
+    </div>
+  }
+
+  <form
+    [formGroup]="productoForm"
+    (ngSubmit)="guardarProducto()"
+    class="formulario">
+
+    <!-- NOMBRE -->
+    <div class="campo">
+      <label for="nombreProducto">
+        Nombre del producto
+      </label>
+      <input
+        id="nombreProducto"
+        type="text"
+        formControlName="nombreProducto"
+        placeholder="Ej. Esfera">
+      @if (
+        productoForm.controls.nombreProducto.touched &&
+        productoForm.controls.nombreProducto.invalid
+      ) {
+        <small class="error">
+          El nombre es obligatorio y debe tener
+          como máximo 100 caracteres.
+        </small>
+      }
+    </div>
+
+    <!-- SLUG -->
+    <div class="campo">
+      <div class="label-con-boton">
+        <label for="slug">
+          Slug
+        </label>
+        <button
+          type="button"
+          class="btn-generar"
+          (click)="generarSlug()">
+          Generar automáticamente
+        </button>
+      </div>
+      <input
+        id="slug"
+        type="text"
+        formControlName="slug"
+        placeholder="esfera">
+      <small class="ayuda">
+        Se utiliza en la URL del producto.
+      </small>
+      @if (
+        productoForm.controls.slug.touched &&
+        productoForm.controls.slug.invalid
+      ) {
+        <small class="error">
+          El slug es obligatorio y debe tener
+          como máximo 100 caracteres.
+        </small>
+      }
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="campo">
+      <label for="descripcion">
+        Descripción
+      </label>
+      <textarea
+        id="descripcion"
+        rows="6"
+        formControlName="descripcion"
+        placeholder="Descripción del producto...">
+      </textarea>
+    </div>
+
+    <!-- PRECIO / STOCK -->
+    <div class="fila">
+      <div class="campo">
+        <label for="precio">
+          Precio (€)
+        </label>
+        <input
+          id="precio"
+          type="number"
+          min="0"
+          step="0.01"
+          formControlName="precio"
+          placeholder="0.00">
+        @if (
+          productoForm.controls.precio.touched &&
+          productoForm.controls.precio.invalid
+        ) {
+          <small class="error">
+            Introduce un precio válido.
+          </small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="stock">
+          Stock
+        </label>
+        <input
+          id="stock"
+          type="number"
+          min="0"
+          formControlName="stock"
+          placeholder="0">
+        @if (
+          productoForm.controls.stock.touched &&
+          productoForm.controls.stock.invalid
+        ) {
+          <small class="error">
+            El stock debe ser 0 o superior.
+          </small>
+        }
+      </div>
+    </div>
+
+    <!-- IMAGEN -->
+<div class="campo">
+  <label for="imagen">
+    Imagen del producto
+  </label>
+  <input
+    id="imagen"
+    type="file"
+    accept="image/png,image/jpeg,image/webp"
+    (change)="seleccionarImagen($event)"
+  >
+  <small>
+    Formatos permitidos: JPG, PNG o WebP. Máximo 5 MB.
+  </small>
+</div>
+
+@if (previewImagen) {
+  <div class="preview">
+    <p>Vista previa:</p>
+    <img
+      [src]="previewImagen"
+      alt="Vista previa del producto"
+    >
+  </div>
+}
+
+@if (error) {
+  <div class="error">
+    {{ error }}
+  </div>
+}
+
+    <!-- BOTONES -->
+    <div class="acciones">
+      <button
+        type="button"
+        class="btn-secundario"
+        (click)="cancelar()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn-guardar"
+        [disabled]="guardando">
+        @if (guardando) {
+          Guardando...
+        } @else {
+          Guardar producto
+        }
+      </button>
+    </div>
+  
+  </form>
+</div>

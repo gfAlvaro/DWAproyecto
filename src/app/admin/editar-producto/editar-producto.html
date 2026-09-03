@@ -83,17 +83,37 @@
       >
     </div>
 
-    <div>
-      <label for="pathImagen">
-        Imagen
-      </label>
+    <!-- IMAGEN -->
+  <div class="campo">
+  <label for="imagen">
+    Imagen del producto
+  </label>
+  <input
+    id="imagen"
+    type="file"
+    accept="image/png,image/jpeg,image/webp"
+    (change)="seleccionarImagen($event)"
+  >
+  <small>
+    Formatos permitidos: JPG, PNG o WebP. Máximo 5 MB.
+  </small>
+</div>
 
-      <input
-        id="pathImagen"
-        type="text"
-        formControlName="pathImagen"
-      >
-    </div>
+@if (previewImagen) {
+  <div class="preview">
+    <p>Vista previa:</p>
+    <img
+      [src]="previewImagen"
+      alt="Vista previa del producto"
+    >
+  </div>
+}
+
+@if (error) {
+  <div class="error">
+    {{ error }}
+  </div>
+}
 
     <div>
 

@@ -12,7 +12,11 @@ import { AdminProductosService } from '../../core/services/admin-productos.servi
   styleUrl: './editar-producto.scss'
 })
 export class EditarProducto implements OnInit {
+  // Imagen seleccionada desde el ordenador
+  imagenSeleccionada: File | null = null;
 
+  // Vista previa de la imagen
+  previewImagen: string | null = null;
   productoId!: number;
 
   cargando = true;
@@ -155,6 +159,62 @@ constructor(
 
       });
   }
+
+  /**
+   * Selecciona la imagen del producto.
+   */
+  seleccionarImagen(event: Event): void {
+
+    const input =
+      event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
+      this.imagenSeleccionada = null;
+      this.previewImagen = null;
+      return;
+    }
+
+    const archivo = input.files[0];
+
+    // Validar que sea una imagen
+    if (!archivo.type.startsWith('image/')) {
+
+      this.error =
+        'El archivo seleccionado no es una imagen.';
+
+      this.imagenSeleccionada = null;
+      this.previewImagen = null;
+
+      return;
+    }
+
+    // Validar tamaño: máximo 5 MB
+    if (archivo.size > 5 * 1024 * 1024) {
+
+      this.error =
+        'La imagen no puede superar los 5 MB.';
+
+      this.imagenSeleccionada = null;
+      this.previewImagen = null;
+
+      return;
+    }
+
+    this.error = '';
+
+    this.imagenSeleccionada = archivo;
+
+    // Crear vista previa
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.previewImagen =
+        reader.result as string;
+    };
+
+    reader.readAsDataURL(archivo);
+  }
+
 
   cancelar(): void {
     this.router.navigate(['/admin/admin-productos']);
