@@ -12,51 +12,37 @@ export class AdminProductosService {
 
   constructor(private http: HttpClient) {}
 
-  // =========================
-  // OBTENER TODOS
-  // =========================
-obtenerProductos(): Observable<Producto[]> {
-  return this.http.get<Producto[]>(this.apiUrl);
-}
+  obtenerProductos(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(
+      this.apiUrl
+    );
+  }
 
-  // =========================
-  // OBTENER UNO
-  // =========================
   obtenerProducto(id: number): Observable<Producto> {
     return this.http.get<Producto>(
       `${this.apiUrl}/${id}`
     );
   }
 
-  // =========================
-  // CREAR
-  // =========================
   crearProducto(formData: FormData) {
-  return this.http.post(
-    '/api/productos',
-    formData
-  );
-}
-
-  // =========================
-  // ACTUALIZAR
-  // =========================
-  actualizarProducto(
-    id: number,
-    producto: Producto
-  ): Observable<any> {
-    return this.http.put(
-      `${this.apiUrl}/${id}`,
-      producto
+    return this.http.post(
+      this.apiUrl,
+      formData
     );
   }
 
-  // =========================
-  // ELIMINAR
-  // =========================
+  actualizarProducto(id: number, formData: FormData) {
+    return this.http.put(
+      `/api/admin/productos/${id}`,
+      formData
+    );
+  }
+
   eliminarProducto(id: number): Observable<any> {
+
     return this.http.delete(
       `${this.apiUrl}/${id}`
     );
   }
+
 }

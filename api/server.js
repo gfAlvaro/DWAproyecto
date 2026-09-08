@@ -1,18 +1,20 @@
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const app = express();
-const path = require('path');
 const verificarToken = require('./middleware/auth');
 
 app.use(cors());
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
 
 process.on('uncaughtException', (err) => {
   console.error('❌ SE CAYÓ EL SERVIDOR POR UN ERROR NO CONTROLADO:', err);
@@ -33,8 +35,79 @@ db.connect(err => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Servidor Node.js corriendo en el puerto ${PORT}`);
+// =====================================================
+// CONFIGURACIÓN DE IMÁGENES DE PRODUCTOS
+// =====================================================
+const carpetaImagenesProductos = path.join(
+  __dirname,
+  'httpdocs',
+  'img',
+  'productos'
+);
+
+if (!fs.existsSync(carpetaImagenesProductos)) {
+  fs.mkdirSync(carpetaImagenesProductos, {
+    recursive: true
+  });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, carpetaImagenesProductos);
+  },
+
+  filename: (req, file, cb) => {
+    const extension =
+      path.extname(file.originalname).toLowerCase();
+
+    const nombreUnico =
+      crypto.randomUUID() + extension;
+
+    cb(null, nombreUnico);
+  }
+});
+
+const uploadImagen = multer({
+  storage,
+
+  limits: {
+    fileSize: 5 * 1024 * 1024
+  },
+
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(
+        new Error('El archivo debe ser una imagen')
+      );
+    }
+
+    cb(null, true);
+  }
+});
+
+app.use((req, res, next) => {
+  console.log('🔥 LLEGA A EXPRESS:', req.method, req.originalUrl);
+  next();
+});
+
+app.get('/api/prueba-node', (req, res) => {
+  const datos = {
+    ok: true,
+    mensaje: 'Node está funcionando',
+    fecha: new Date().toISOString(),
+    url: req.originalUrl,
+    metodo: req.method,
+    pid: process.pid
+  };
+
+  console.log('🔥🔥🔥 PRUEBA NODE EJECUTADA 🔥🔥🔥', datos);
+
+  res.json(datos);
+});
+
+app.get('/prueba-log', (req, res) => {
+  console.log('🚨🚨🚨 HE LLEGADO A PRUEBA-LOG 🚨🚨🚨');
+  res.send('HE LLEGADO A EXPRESS');
 });
 
 app.get('/api/clientes', (req, res) => {
@@ -269,10 +342,14 @@ app.get(
   }
 );
 
+// =====================================================
 // CREAR UN NUEVO PRODUCTO
+// =====================================================
+
 app.post(
   '/api/admin/productos',
   verificarToken,
+  uploadImagen.single('imagen'),
   (req, res) => {
 
     const {
@@ -280,15 +357,50 @@ app.post(
       slug,
       descripcion,
       precio,
-      stock,
-      pathImagen
+      stock
     } = req.body;
 
-    if (!nombreProducto || !slug || precio === undefined) {
+    // -----------------------------------------
+    // Validaciones
+    // -----------------------------------------
+
+    if (
+      !nombreProducto ||
+      !slug ||
+      precio === undefined
+    ) {
+
+      // Si se había subido una imagen pero faltan
+      // datos obligatorios, eliminamos la imagen
+      if (req.file) {
+        fs.unlink(
+          req.file.path,
+          () => {}
+        );
+      }
+
       return res.status(400).json({
-        mensaje: 'Nombre, slug y precio son obligatorios'
+        mensaje:
+          'Nombre, slug y precio son obligatorios'
       });
     }
+
+    // -----------------------------------------
+    // Ruta que guardaremos en MySQL
+    // -----------------------------------------
+
+    let pathImagen = null;
+
+    if (req.file) {
+
+      pathImagen =
+        `/img/productos/${req.file.filename}`;
+
+    }
+
+    // -----------------------------------------
+    // Insertar producto
+    // -----------------------------------------
 
     const sql = `
       INSERT INTO productos
@@ -309,35 +421,70 @@ app.post(
       descripcion || null,
       precio,
       stock ?? 0,
-      pathImagen || null
+      pathImagen
     ];
 
-    db.query(sql, valores, (err, result) => {
+    db.query(
+      sql,
+      valores,
+      (err, result) => {
 
-      if (err) {
+        if (err) {
 
-        console.error(
-          '❌ Error creando producto:',
-          err.message
-        );
+          console.error(
+            '❌ Error creando producto:',
+            err.message
+          );
 
-        return res.status(500).json({
-          mensaje: 'Error creando producto'
+          // Si MySQL falla, borrar imagen subida
+          if (req.file) {
+            fs.unlink(
+              req.file.path,
+              () => {}
+            );
+          }
+
+          // Slug duplicado
+          if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+              mensaje:
+                'Ya existe un producto con ese slug.'
+            });
+          }
+
+          return res.status(500).json({
+            mensaje:
+              'Error creando producto'
+          });
+        }
+
+        // -----------------------------------------
+        // Todo correcto
+        // -----------------------------------------
+
+        res.status(201).json({
+
+          mensaje:
+            'Producto creado correctamente',
+
+          productoID:
+            result.insertId,
+
+          pathImagen
+
         });
-      }
 
-      res.status(201).json({
-        mensaje: 'Producto creado correctamente',
-        productoID: result.insertId
-      });
-    });
+      }
+    );
+
   }
 );
 
-// ACTUALIZAR UN PRODUCTO
+// editar producto existente
 app.put(
   '/api/admin/productos/:id',
   verificarToken,
+  uploadImagen.single('imagen'),
   (req, res) => {
 
     const { id } = req.params;
@@ -347,62 +494,205 @@ app.put(
       slug,
       descripcion,
       precio,
-      stock,
-      pathImagen
+      stock
     } = req.body;
 
-    if (!nombreProducto || !slug || precio === undefined) {
+    // -----------------------------------------
+    // Validaciones
+    // -----------------------------------------
+
+    if (
+      !nombreProducto ||
+      !slug ||
+      precio === undefined
+    ) {
+
+      // Si se subió una imagen pero los datos
+      // son incorrectos, eliminamos la nueva imagen
+      if (req.file) {
+        fs.unlink(req.file.path, () => {});
+      }
+
       return res.status(400).json({
-        mensaje: 'Nombre, slug y precio son obligatorios'
+        mensaje:
+          'Nombre, slug y precio son obligatorios'
       });
     }
 
-    const sql = `
-      UPDATE productos
-      SET
-        nombreProducto = ?,
-        slug = ?,
-        descripcion = ?,
-        precio = ?,
-        stock = ?,
-        pathImagen = ?
+    // -----------------------------------------
+    // Primero obtenemos el producto actual
+    // para conocer su imagen antigua
+    // -----------------------------------------
+
+    const sqlProducto = `
+      SELECT
+        pathImagen
+      FROM productos
       WHERE productoID = ?
+      LIMIT 1
     `;
 
-    const valores = [
-      nombreProducto,
-      slug,
-      descripcion || null,
-      precio,
-      stock ?? 0,
-      pathImagen || null,
-      id
-    ];
+    db.query(
+      sqlProducto,
+      [id],
+      (err, resultados) => {
 
-    db.query(sql, valores, (err, result) => {
+        if (err) {
 
-      if (err) {
+          console.error(
+            '❌ Error obteniendo producto:',
+            err.message
+          );
 
-        console.error(
-          '❌ Error actualizando producto:',
-          err.message
+          if (req.file) {
+            fs.unlink(req.file.path, () => {});
+          }
+
+          return res.status(500).json({
+            mensaje: 'Error en la base de datos'
+          });
+        }
+
+        // -----------------------------------------
+        // Producto no existe
+        // -----------------------------------------
+
+        if (resultados.length === 0) {
+
+          if (req.file) {
+            fs.unlink(req.file.path, () => {});
+          }
+
+          return res.status(404).json({
+            mensaje: 'Producto no encontrado'
+          });
+        }
+
+        const imagenAnterior =
+          resultados[0].pathImagen;
+
+        // -----------------------------------------
+        // Determinar imagen que guardaremos
+        // -----------------------------------------
+
+        let pathImagen = imagenAnterior;
+
+        if (req.file) {
+
+          pathImagen =
+            `/img/productos/${req.file.filename}`;
+
+        }
+
+        // -----------------------------------------
+        // Actualizar producto
+        // -----------------------------------------
+
+        const sqlUpdate = `
+          UPDATE productos
+          SET
+            nombreProducto = ?,
+            slug = ?,
+            descripcion = ?,
+            precio = ?,
+            stock = ?,
+            pathImagen = ?
+          WHERE productoID = ?
+        `;
+
+        const valores = [
+          nombreProducto,
+          slug,
+          descripcion || null,
+          precio,
+          stock ?? 0,
+          pathImagen,
+          id
+        ];
+
+        db.query(
+          sqlUpdate,
+          valores,
+          (err, result) => {
+
+            if (err) {
+
+              console.error(
+                '❌ Error actualizando producto:',
+                err.message
+              );
+
+              // Eliminar la nueva imagen si MySQL falla
+              if (req.file) {
+                fs.unlink(req.file.path, () => {});
+              }
+
+              if (err.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({
+                  mensaje:
+                    'Ya existe un producto con ese slug.'
+                });
+              }
+
+              return res.status(500).json({
+                mensaje:
+                  'Error actualizando producto'
+              });
+            }
+
+            // -----------------------------------------
+            // Si se ha subido una imagen nueva,
+            // eliminar la imagen antigua
+            // -----------------------------------------
+
+            if (
+              req.file &&
+              imagenAnterior
+            ) {
+
+              const nombreImagenAnterior =
+                path.basename(imagenAnterior);
+
+              const rutaImagenAnterior =
+                path.join(
+                  carpetaImagenesProductos,
+                  nombreImagenAnterior
+                );
+
+              fs.unlink(
+                rutaImagenAnterior,
+                (error) => {
+
+                  if (error && error.code !== 'ENOENT') {
+
+                    console.error(
+                      '⚠️ No se pudo eliminar la imagen anterior:',
+                      error.message
+                    );
+
+                  }
+
+                }
+              );
+            }
+
+            // -----------------------------------------
+            // Respuesta
+            // -----------------------------------------
+
+            res.json({
+              mensaje:
+                'Producto actualizado correctamente',
+
+              pathImagen
+            });
+
+          }
         );
 
-        return res.status(500).json({
-          mensaje: 'Error actualizando producto'
-        });
       }
+    );
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({
-          mensaje: 'Producto no encontrado'
-        });
-      }
-
-      res.json({
-        mensaje: 'Producto actualizado correctamente'
-      });
-    });
   }
 );
 
@@ -566,12 +856,46 @@ app.get(
   }
 );
 
-// Servir Angular desde httpdocs
+// =====================================================
+// ANGULAR
+// =====================================================
+
 const angularPath = path.join(__dirname, 'httpdocs');
+const angularIndex = path.join(
+  angularPath,
+  'index.html'
+);
 
-app.use(express.static(angularPath));
+console.log('📁 Angular:', angularPath);
+console.log('📄 Index:', angularIndex);
 
-// Fallback para Angular Router
-app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(angularPath, 'index.html'));
+// Archivos estáticos de Angular
+app.use(
+  express.static(angularPath)
+);
+
+app.use((req, res, next) => {
+  // Las API no pasan por Angular
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+
+  // Solo GET
+  if (req.method !== 'GET') {
+    return next();
+  }
+
+  const index = path.join(__dirname, 'httpdocs', 'index.html');
+
+  fs.readFile(index, 'utf8', (err, html) => {
+    if (err) {
+      return res.status(500).send('Error cargando Angular');
+    }
+
+    res.type('html').send(html);
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor Node.js corriendo en el puerto ${PORT}`);
 });

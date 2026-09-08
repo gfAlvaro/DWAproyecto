@@ -109,56 +109,97 @@ constructor(
       });
   }
 
-  guardar(): void {
+guardar(): void {
 
-    if (this.formulario.invalid) {
-
-      this.formulario.markAllAsTouched();
-
-      return;
-    }
-
-    this.guardando = true;
-    this.error = '';
-    this.mensaje = '';
-
-    const datos = this.formulario.getRawValue();
-
-    this.adminProductosService
-      .actualizarProducto(this.productoId, datos)
-      .subscribe({
-
-        next: () => {
-
-          this.mensaje =
-            'Producto actualizado correctamente';
-
-          this.guardando = false;
-
-          this.cdr.detectChanges();
-
-          setTimeout(() => {
-            this.router.navigate(['/admin/admin-productos']);
-          }, 800);
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error actualizando producto:',
-            error
-          );
-
-          this.error =
-            'No se pudo actualizar el producto';
-
-          this.guardando = false;
-
-          this.cdr.detectChanges();
-        }
-
-      });
+  if (this.formulario.invalid) {
+    this.formulario.markAllAsTouched();
+    return;
   }
+
+  this.guardando = true;
+  this.error = '';
+  this.mensaje = '';
+
+  const datos = this.formulario.getRawValue();
+
+  const formData = new FormData();
+
+  formData.append(
+    'nombreProducto',
+    datos.nombreProducto ?? ''
+  );
+
+  formData.append(
+    'slug',
+    datos.slug ?? ''
+  );
+
+  formData.append(
+    'descripcion',
+    datos.descripcion ?? ''
+  );
+
+  formData.append(
+    'precio',
+    String(datos.precio ?? '')
+  );
+
+  formData.append(
+    'stock',
+    String(datos.stock ?? 0)
+  );
+
+  // Solo enviamos imagen si el usuario ha seleccionado una nueva
+  if (this.imagenSeleccionada) {
+    formData.append(
+      'imagen',
+      this.imagenSeleccionada
+    );
+  }
+
+  this.adminProductosService
+    .actualizarProducto(
+      this.productoId,
+      formData
+    )
+    .subscribe({
+
+      next: () => {
+
+        this.mensaje =
+          'Producto actualizado correctamente';
+
+        this.guardando = false;
+
+        this.cdr.detectChanges();
+
+        setTimeout(() => {
+          this.router.navigate([
+            '/admin/admin-productos'
+          ]);
+        }, 800);
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Error actualizando producto:',
+          error
+        );
+
+        this.error =
+          error?.error?.mensaje ||
+          'No se pudo actualizar el producto';
+
+        this.guardando = false;
+
+        this.cdr.detectChanges();
+      }
+
+    });
+}
+
+
 
   /**
    * Selecciona la imagen del producto.
