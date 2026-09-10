@@ -26,7 +26,7 @@ function verificarToken(req, res, next) {
 
     const datos = jwt.verify(token, JWT_SECRET);
 
-    req.administrador = datos;
+    req.usuario = datos;
 
     next();
 

@@ -1,0 +1,28 @@
+<div class="mi-cuenta">
+  <h1>Mi cuenta</h1>
+  @if (cargando) {
+    <p>Cargando tus datos...</p>
+  } @else if (error) {
+    <p>{{ error }}</p>
+  } @else if (cliente) {
+    <section class="datos-cliente">
+      <h2>Mis datos</h2>
+      <p>
+        <strong>Nombre:</strong>
+        {{ cliente.nombre }} {{ cliente.apellido }}
+      </p>
+      <p>
+        <strong>Email:</strong>
+        {{ cliente.email }}
+      </p>
+      <p>
+        <strong>Teléfono:</strong>
+        {{ cliente.telefono }}
+      </p>
+      <p>
+        <strong>Dirección:</strong>
+        {{ cliente.direccion }}
+      </p>
+    </section>
+  }
+</div>

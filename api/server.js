@@ -10,6 +10,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const app = express();
 const verificarToken = require('./middleware/auth');
+const requiereRol = require('./middleware/roles');
 
 app.use(cors());
 app.use(express.json());
@@ -103,30 +104,6 @@ app.get('/api/prueba-node', (req, res) => {
   console.log('🔥🔥🔥 PRUEBA NODE EJECUTADA 🔥🔥🔥', datos);
 
   res.json(datos);
-});
-
-app.get('/prueba-log', (req, res) => {
-  console.log('🚨🚨🚨 HE LLEGADO A PRUEBA-LOG 🚨🚨🚨');
-  res.send('HE LLEGADO A EXPRESS');
-});
-
-app.get('/api/clientes', (req, res) => {
-  console.log('--- 📥 Petición recibida desde Angular en /api/clientes ---');
-
-  db.query('SELECT * FROM clientes', (err, results) => {
-    if (err) {
-      console.error("❌ ERROR REAL EN MYSQL:", err.message);
-      // Enviamos el mensaje de error real a Angular para que lo veas en el navegador
-      return res.status(500).json({ 
-        mensaje: "Error en la base de datos", 
-        errorDetallado: err.message,
-        codigoError: err.code 
-      });
-    }
-    
-    console.log(`✅ Consulta exitosa. Se encontraron ${results.length} clientes.`);
-    res.json(results);
-  });
 });
 
 // OBTENER TODOS LOS PRODUCTOS
@@ -279,6 +256,7 @@ app.post('/api/admin/login', (req, res) => {
       {
         id: administrador.id,
         email: administrador.email,
+        tipo: 'administrador',
         rol: administrador.rol
       },
       JWT_SECRET,
@@ -308,6 +286,7 @@ app.post('/api/admin/login', (req, res) => {
 app.get(
   '/api/admin/productos',
   verificarToken,
+  requiereRol('administrador'),
   (req, res) => {
 
     const sql = `
@@ -349,6 +328,7 @@ app.get(
 app.post(
   '/api/admin/productos',
   verificarToken,
+    requiereRol('administrador'),
   uploadImagen.single('imagen'),
   (req, res) => {
 
@@ -484,6 +464,7 @@ app.post(
 app.put(
   '/api/admin/productos/:id',
   verificarToken,
+  requiereRol('administrador'),
   uploadImagen.single('imagen'),
   (req, res) => {
 
@@ -700,6 +681,7 @@ app.put(
 app.delete(
   '/api/admin/productos/:id',
   verificarToken,
+  requiereRol('administrador'),
   (req, res) => {
 
     const { id } = req.params;
@@ -740,6 +722,7 @@ app.delete(
 app.get(
   '/api/admin/productos/:id',
   verificarToken,
+  requiereRol('administrador'),
   (req, res) => {
 
     const { id } = req.params;
@@ -789,6 +772,7 @@ app.get(
 app.get(
   '/api/admin/clientes',
   verificarToken,
+  requiereRol('administrador'),
   (req, res) => {
 
     const sql = `
@@ -826,6 +810,7 @@ app.get(
 app.get(
   '/api/admin/pedidos',
   verificarToken,
+  requiereRol('administrador'),
   (req, res) => {
 
     const sql = `
@@ -856,10 +841,204 @@ app.get(
   }
 );
 
+// login de clientes
+app.post('/api/cliente/login', async (req, res) => {
+
+  try {
+
+    const { email, password } = req.body;
+
+    const [resultados] = await db.query(
+      `SELECT clienteID, nombre, apellido, email, password,
+              telefono, direccion, fechaRegistro
+       FROM clientes
+       WHERE email = ?`,
+      [email]
+    );
+
+console.log('📧 Email recibido:', email);
+console.log('👤 Clientes encontrados:', resultados.length);
+
+if (resultados.length > 0) {
+  console.log('📧 Email BD:', resultados[0].email);
+  console.log('🆔 Cliente:', resultados[0].clienteID);
+  console.log('🔐 Hash existe:', !!resultados[0].password);
+}
+
+    if (resultados.length === 0) {
+      return res.status(401).json({
+        mensaje: 'Credenciales incorrectas'
+      });
+    }
+
+    const cliente = resultados[0];
+
+    const passwordCorrecta = await bcrypt.compare(
+      password,
+      cliente.password
+    );
+
+    if (!passwordCorrecta) {
+      return res.status(401).json({
+        mensaje: 'Credenciales incorrectas'
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: cliente.clienteID,
+        email: cliente.email,
+        tipo: 'cliente'
+      },
+      JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+
+    res.json({
+      mensaje: 'Login correcto',
+      token,
+      cliente: {
+        clienteID: cliente.clienteID,
+        nombre: cliente.nombre,
+        apellido: cliente.apellido,
+        email: cliente.email,
+        telefono: cliente.telefono,
+        direccion: cliente.direccion,
+        fechaRegistro: cliente.fechaRegistro
+      }
+    });
+
+
+} catch (error) {
+  console.error('❌ ERROR LOGIN CLIENTE:', error);
+  console.error('❌ MESSAGE:', error.message);
+  console.error('❌ STACK:', error.stack);
+
+  res.status(500).json({
+    mensaje: 'Error interno del servidor'
+  });
+}
+    res.status(500).json({
+      mensaje: 'Error interno del servidor'
+    });
+
+  }
+
+);
+
+// conseguir datos del cliente logueado
+app.get(
+  '/api/cliente/me',
+  verificarToken,
+  requiereRol('cliente'),
+  async (req, res) => {
+
+    try {
+
+      const [resultados] = await db.query(
+        `SELECT clienteID, nombre, apellido, email,
+                telefono, direccion, fechaRegistro
+         FROM clientes
+         WHERE clienteID = ?`,
+        [req.usuario.id]
+      );
+
+      if (resultados.length === 0) {
+        return res.status(404).json({
+          mensaje: 'Cliente no encontrado'
+        });
+      }
+
+      res.json(resultados[0]);
+
+    } catch (error) {
+
+      console.error('❌ Error obteniendo datos del cliente:', error);
+
+      res.status(500).json({
+        mensaje: 'Error interno del servidor'
+      });
+
+    }
+
+  }
+);
+
+// conseguir pedidos del cliente logueado
+app.get(
+  '/api/cliente/pedidos',
+  verificarToken,
+  requiereRol('cliente'),
+  async (req, res) => {
+
+    try {
+
+      const [pedidos] = await db.query(
+        `SELECT pedidoID, clienteID, fechaPedido, total
+         FROM pedidos
+         WHERE clienteID = ?
+         ORDER BY pedidoID DESC`,
+        [req.usuario.id]
+      );
+
+      res.json(pedidos);
+
+    } catch (error) {
+
+      console.error('❌ Error obteniendo pedidos del cliente:', error);
+
+      res.status(500).json({
+        mensaje: 'Error interno del servidor'
+      });
+
+    }
+
+  }
+);
+
+// conseguir un pedido específico del cliente logueado
+app.get(
+  '/api/cliente/pedidos/:id',
+  verificarToken,
+  requiereRol('cliente'),
+  async (req, res) => {
+
+    try {
+
+      const { id } = req.params;
+
+      const [pedidos] = await db.query(
+        `SELECT pedidoID, clienteID, fechaPedido, total
+         FROM pedidos
+         WHERE pedidoID = ?
+           AND clienteID = ?`,
+        [id, req.usuario.id]
+      );
+
+      if (pedidos.length === 0) {
+        return res.status(404).json({
+          mensaje: 'Pedido no encontrado'
+        });
+      }
+
+      res.json(pedidos[0]);
+
+    } catch (error) {
+
+      console.error('❌ Error obteniendo el pedido:', error);
+
+      res.status(500).json({
+        mensaje: 'Error interno del servidor'
+      });
+
+    }
+
+  }
+);
+
 // =====================================================
 // ANGULAR
 // =====================================================
-
 const angularPath = path.join(__dirname, 'httpdocs');
 const angularIndex = path.join(
   angularPath,

@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { Inicio } from './inicio/inicio';
-import { SesionForm } from './sesion-form/sesion-form';
+import { Login } from './client/login/login';
 import { SobreNosotros } from './sobre-nosotros/sobre-nosotros';
 import { Productos } from './productos/productos';
 import { Contacto } from './contacto/contacto';
 import { Producto } from './producto/producto';
 import { adminGuard } from './guards/admin.guard';
+import { clienteGuard } from './guards/client.guard';
 import { PublicLayout } from './public-layout/public-layout';
 import { AdminLayout } from './admin/admin-layout/admin-layout';
 
@@ -19,13 +20,59 @@ export const routes: Routes = [
     component: PublicLayout,
     children: [
       { path: '', component: Inicio },
-      { path: 'sesion-form', component: SesionForm },
+      { path: 'login', component: Login },
       { path: 'sobre-nosotros', component: SobreNosotros },
       { path: 'productos', component: Productos },
       { path: 'productos/:slug', component: Producto },
       { path: 'contacto', component: Contacto }
     ]
   },
+
+// =========================
+// ÁREA DE CLIENTE
+// =========================
+{
+  path: 'mi-cuenta',
+  canActivate: [clienteGuard],
+  loadComponent: () =>
+    import('./client/mi-cuenta/mi-cuenta')
+      .then(m => m.MiCuenta)
+},
+/*{
+  path: 'mi-cuenta',
+  canActivate: [clienteGuard],
+  children: [
+
+    {
+      path: '',
+      loadComponent: () =>
+        import('./client/mi-cuenta/mi-cuenta')
+          .then(m => m.MiCuenta)
+    },
+
+    {
+      path: 'pedidos',
+      loadComponent: () =>
+        import('./client/pedidos/pedidos')
+          .then(m => m.Pedidos)
+    },
+
+    {
+      path: 'pedidos/:id',
+      loadComponent: () =>
+        import('./client/detalle-pedido/detalle-pedido')
+          .then(m => m.DetallePedido)
+    },
+
+    {
+      path: 'perfil',
+      loadComponent: () =>
+        import('./client/perfil/perfil')
+          .then(m => m.Perfil)
+    }
+
+  ]
+},*/
 
   // =========================
   // ADMIN
