@@ -91,21 +91,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/prueba-node', (req, res) => {
-  const datos = {
-    ok: true,
-    mensaje: 'Node está funcionando',
-    fecha: new Date().toISOString(),
-    url: req.originalUrl,
-    metodo: req.method,
-    pid: process.pid
-  };
-
-  console.log('🔥🔥🔥 PRUEBA NODE EJECUTADA 🔥🔥🔥', datos);
-
-  res.json(datos);
-});
-
 // OBTENER TODOS LOS PRODUCTOS
 app.get('/api/productos', (req, res) => {
   console.log('--- 📥 Petición recibida desde Angular en /api/productos ---');
@@ -842,28 +827,38 @@ app.get(
 );
 
 // login de clientes
-app.post('/api/cliente/login', async (req, res) => {
+app.post('/api/cliente/login', (req, res) => {
 
-  try {
+  const { email, password } = req.body;
 
-    const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      mensaje: 'Email y contraseña son obligatorios'
+    });
+  }
 
-    const [resultados] = await db.query(
-      `SELECT clienteID, nombre, apellido, email, password,
-              telefono, direccion, fechaRegistro
-       FROM clientes
-       WHERE email = ?`,
-      [email]
-    );
+  const sql = `
+    SELECT
+      clienteID,
+      nombre,
+      apellido,
+      email,
+      password,
+      telefono,
+      direccion,
+      fechaRegistro
+    FROM clientes
+    WHERE email = ?
+    LIMIT 1
+  `;
 
-console.log('📧 Email recibido:', email);
-console.log('👤 Clientes encontrados:', resultados.length);
+  db.query(sql, [email], async (err, resultados) => {
 
-if (resultados.length > 0) {
-  console.log('📧 Email BD:', resultados[0].email);
-  console.log('🆔 Cliente:', resultados[0].clienteID);
-  console.log('🔐 Hash existe:', !!resultados[0].password);
-}
+    if (err) {
+      return res.status(500).json({
+        mensaje: 'Error interno del servidor'
+      });
+    }
 
     if (resultados.length === 0) {
       return res.status(401).json({
@@ -873,75 +868,79 @@ if (resultados.length > 0) {
 
     const cliente = resultados[0];
 
-    const passwordCorrecta = await bcrypt.compare(
-      password,
-      cliente.password
-    );
+    try {
 
-    if (!passwordCorrecta) {
-      return res.status(401).json({
-        mensaje: 'Credenciales incorrectas'
+      const passwordCorrecta = await bcrypt.compare(
+        password,
+        cliente.password
+      );
+
+      if (!passwordCorrecta) {
+        return res.status(401).json({
+          mensaje: 'Credenciales incorrectas'
+        });
+      }
+
+      const token = jwt.sign(
+        {
+          id: cliente.clienteID,
+          email: cliente.email,
+          tipo: 'cliente'
+        },
+        JWT_SECRET,
+        {
+          expiresIn: '8h'
+        }
+      );
+
+      return res.json({
+        mensaje: 'Login correcto',
+        token,
+        cliente: {
+          clienteID: cliente.clienteID,
+          nombre: cliente.nombre,
+          apellido: cliente.apellido,
+          email: cliente.email,
+          telefono: cliente.telefono,
+          direccion: cliente.direccion,
+          fechaRegistro: cliente.fechaRegistro
+        }
       });
+
+    } catch (error) {
+
+      return res.status(500).json({
+        mensaje: 'Error interno del servidor'
+      });
+
     }
 
-    const token = jwt.sign(
-      {
-        id: cliente.clienteID,
-        email: cliente.email,
-        tipo: 'cliente'
-      },
-      JWT_SECRET,
-      { expiresIn: '8h' }
-    );
-
-    res.json({
-      mensaje: 'Login correcto',
-      token,
-      cliente: {
-        clienteID: cliente.clienteID,
-        nombre: cliente.nombre,
-        apellido: cliente.apellido,
-        email: cliente.email,
-        telefono: cliente.telefono,
-        direccion: cliente.direccion,
-        fechaRegistro: cliente.fechaRegistro
-      }
-    });
-
-
-} catch (error) {
-  console.error('❌ ERROR LOGIN CLIENTE:', error);
-  console.error('❌ MESSAGE:', error.message);
-  console.error('❌ STACK:', error.stack);
-
-  res.status(500).json({
-    mensaje: 'Error interno del servidor'
   });
-}
-    res.status(500).json({
-      mensaje: 'Error interno del servidor'
-    });
 
-  }
-
-);
+});
 
 // conseguir datos del cliente logueado
 app.get(
   '/api/cliente/me',
   verificarToken,
   requiereRol('cliente'),
-  async (req, res) => {
+  (req, res) => {
 
-    try {
+    const sql = `
+      SELECT clienteID, nombre, apellido, email,
+             telefono, direccion, fechaRegistro
+      FROM clientes
+      WHERE clienteID = ?
+    `;
 
-      const [resultados] = await db.query(
-        `SELECT clienteID, nombre, apellido, email,
-                telefono, direccion, fechaRegistro
-         FROM clientes
-         WHERE clienteID = ?`,
-        [req.usuario.id]
-      );
+    db.query(sql, [req.usuario.id], (error, resultados) => {
+
+      if (error) {
+        console.error('❌ Error obteniendo datos del cliente:', error);
+        return res.status(500).json({
+          mensaje: 'Error interno del servidor'
+        });
+      }
 
       if (resultados.length === 0) {
         return res.status(404).json({
@@ -950,17 +949,7 @@ app.get(
       }
 
       res.json(resultados[0]);
-
-    } catch (error) {
-
-      console.error('❌ Error obteniendo datos del cliente:', error);
-
-      res.status(500).json({
-        mensaje: 'Error interno del servidor'
-      });
-
-    }
-
+    });
   }
 );
 

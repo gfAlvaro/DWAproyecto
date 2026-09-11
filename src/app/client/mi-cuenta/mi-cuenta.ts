@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Cliente } from '../../core/services/auth.service';
 
@@ -12,6 +12,7 @@ import { Cliente } from '../../core/services/auth.service';
 export class MiCuenta implements OnInit {
 
   private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
 
   cliente: Cliente | null = null;
   cargando = true;
@@ -19,22 +20,34 @@ export class MiCuenta implements OnInit {
 
   ngOnInit(): void {
 
+    console.log('🔥 MiCuenta se ha iniciado');
+
     this.http.get<Cliente>('/api/cliente/me').subscribe({
 
       next: (cliente) => {
 
+        console.log('✅ CLIENTE RECIBIDO:', cliente);
+
         this.cliente = cliente;
+
+        console.log(
+          '🔥 this.cliente DESPUÉS DE ASIGNAR:',
+          this.cliente
+        );
+
         this.cargando = false;
 
+        this.cdr.detectChanges();
       },
 
       error: (error) => {
 
-        console.error('Error obteniendo cliente:', error);
+        console.error('❌ Error obteniendo cliente:', error);
 
         this.error = 'No se han podido cargar tus datos.';
         this.cargando = false;
 
+        this.cdr.detectChanges();
       }
 
     });
