@@ -1,1 +1,51 @@
-<p>pedidos works!</p>
+<div class="pedidos-container">
+  <div class="page-header">
+    <h2>Historial Completo de Pedidos</h2>
+    <a routerLink="/mi-cuenta" class="btn-back">Volver al Dashboard</a>
+  </div>
+  @if (cargando) {
+    <div class="loading-state">
+      <p>Cargando tu historial completo...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-state">
+      <p>{{ error }}</p>
+    </div>
+  } @else if (pedidos.length === 0) {
+    <div class="empty-state">
+      <p>Aún no has realizado ninguna compra en nuestra tienda.</p>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="pedidos-table">
+        <thead>
+          <tr>
+            <th>Nº Pedido</th>
+            <th>Fecha de Compra</th>
+            <th>Total Abonado</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pedido of pedidos; track pedido.pedidoID) {
+            <tr>
+              <td><strong>#{{ pedido.pedidoID }}</strong></td>
+              <td>{{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ pedido.total | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>
+                <!-- Opcional: Clases dinámicas según el estado si lo devuelves en tu query -->
+                <span class="status-badge string">Completado</span>
+              </td>
+              <td>
+                <button class="btn-view" [routerLink]="['/mi-cuenta/pedidos', pedido.pedidoID]">
+                  Ver Detalles
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

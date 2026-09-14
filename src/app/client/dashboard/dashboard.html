@@ -1,1 +1,66 @@
-<p>dashboard works!</p>
+<div class="orders-card">
+  <div class="orders-header">
+    <h3>
+      Últimos pedidos
+    </h3>
+    <a routerLink="/mi-cuenta/pedidos">
+      Ver todos
+    </a>
+  </div>
+  @if (cargando) {
+    <p>Cargando pedidos...</p>
+  } @else if (error) {
+    <p>{{ error }}</p>
+  } @else if (pedidosRecientes.length === 0) {
+    <p>Aún no tienes pedidos.</p>
+  } @else {
+    <div class="orders-table">
+      <div class="table-header">
+        <span>Pedido</span>
+        <span>Fecha</span>
+        <span>Total</span>
+      </div>
+      @for (pedido of pedidosRecientes; track pedido.pedidoID) {
+        <div class="table-row">
+          <span>
+            #{{ pedido.pedidoID }}
+          </span>
+          <span>
+            {{ pedido.fechaPedido }}
+          </span>
+          <span>
+            {{ pedido.total | number:'1.2-2' }} €
+          </span>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<div class="stats">
+
+  <div class="stat-card">
+    <div class="stat-info">
+      <span class="stat-title">
+        Total pedidos
+      </span>
+
+      <strong>
+        {{ totalPedidos }}
+      </strong>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-info">
+      <span class="stat-title">
+        Total gastado
+      </span>
+
+      <strong>
+        {{ totalGastado | number:'1.2-2' }} €
+      </strong>
+    </div>
+  </div>
+
+</div>

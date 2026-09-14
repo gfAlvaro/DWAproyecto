@@ -1,1 +1,46 @@
-<p>perfil works!</p>
+<div class="perfil-container">
+  <div class="page-header">
+    <h2>Mis Datos Personales</h2>
+    <a routerLink="/mi-cuenta" class="btn-back">Volver al Dashboard</a>
+  </div>
+
+  @if (cargando) {
+    <p>Cargando tus datos de perfil...</p>
+  } @else {
+    @if (mensajeExito) { <div class="alert-success">{{ mensajeExito }}</div> }
+    @if (error) { <div class="alert-danger">{{ error }}</div> }
+
+    <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()" class="perfil-form">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" formControlName="nombre" />
+      </div>
+
+      <div class="form-group">
+        <label>Apellido</label>
+        <input type="text" formControlName="apellido" />
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" formControlName="email" />
+      </div>
+
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" formControlName="telefono" />
+      </div>
+
+      <div class="form-group">
+        <label>Dirección de Envío</label>
+        <textarea formControlName="direccion" rows="3"></textarea>
+      </div>
+
+      <p class="registro-info">Miembro desde el: {{ fechaRegistro | date:'dd/MM/yyyy' }}</p>
+
+      <button type="submit" [disabled]="perfilForm.invalid || enviando" class="btn-save">
+        {{ enviando ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </form>
+  }
+</div>
