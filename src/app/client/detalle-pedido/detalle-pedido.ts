@@ -23,7 +23,6 @@ export class DetallePedidos implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Capturamos el ID de la URL (ej: /pedidos/14)
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.cargarDetalle(id);

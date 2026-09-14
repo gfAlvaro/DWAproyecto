@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
-  FormGroup
-} from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -46,10 +41,7 @@ export class Contacto {
       return;
     }
 
-    this.http.post(
-      'https://tu-api.com/contacto',
-      this.contactForm.value
-    ).subscribe({
+    this.http.post('https://tu-api.com/contacto', this.contactForm.value).subscribe({
       next: () => {
         alert('Mensaje enviado');
         this.contactForm.reset();

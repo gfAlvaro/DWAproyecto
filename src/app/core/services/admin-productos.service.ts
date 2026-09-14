@@ -13,36 +13,22 @@ export class AdminProductosService {
   constructor(private http: HttpClient) {}
 
   obtenerProductos(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(
-      this.apiUrl
-    );
+    return this.http.get<Producto[]>( this.apiUrl );
   }
 
   obtenerProducto(id: number): Observable<Producto> {
-    return this.http.get<Producto>(
-      `${this.apiUrl}/${id}`
-    );
+    return this.http.get<Producto>( `${this.apiUrl}/${id}` );
   }
 
   crearProducto(formData: FormData) {
-    return this.http.post(
-      this.apiUrl,
-      formData
-    );
+    return this.http.post( this.apiUrl, formData );
   }
 
   actualizarProducto(id: number, formData: FormData) {
-    return this.http.put(
-      `/api/admin/productos/${id}`,
-      formData
-    );
+    return this.http.put( `/api/admin/productos/${id}`, formData );
   }
 
   eliminarProducto(id: number): Observable<any> {
-
-    return this.http.delete(
-      `${this.apiUrl}/${id}`
-    );
+    return this.http.delete( `${this.apiUrl}/${id}` );
   }
-
 }

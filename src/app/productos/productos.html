@@ -1,6 +1,5 @@
 <h1>Nuestros productos</h1>
 <div class="productos-grid">
-  <!-- El pipe | async se encarga de pintar los datos en cuanto llegan -->
   @for (producto of (productos$ | async); track producto.productoID) {
     <div class="producto">
       <a href="/productos/{{ producto.slug }}" target="_blank">

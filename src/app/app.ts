@@ -1,30 +1,23 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RouterOutlet } from "@angular/router";
-
+import { SeoService } from './core/services/seo.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected title = 'proyectoDWA';
 
   private http = inject(HttpClient);
 
   mensaje = '';
 
-  probarApi() {
-    this.http.get<{ mensaje: string }>('/api/hola')
-      .subscribe({
-        next: respuesta => {
-          this.mensaje = respuesta.mensaje;
-        },
-        error: error => {
-          console.error('Error API:', error);
-          this.mensaje = 'Error al conectar con la API';
-        }
-      });
+ constructor(private seoService: SeoService) {}
+
+  ngOnInit() {
+    this.seoService.initSeoTracking();
   }
 }

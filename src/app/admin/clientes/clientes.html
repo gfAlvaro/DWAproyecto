@@ -1,5 +1,4 @@
 <h2>Clientes</h2>
-
 <table>
   <thead>
     <tr>
@@ -11,7 +10,6 @@
       <th>Direccion</th>
     </tr>
   </thead>
-
   <tbody>
   @for (cliente of (clientes$ | async ); track cliente.clienteID) {
       <tr>

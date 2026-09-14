@@ -1,12 +1,16 @@
 <header>
-<a href="/"><img src="img/logo.png" alt="logo"></a>
-<nav>
-    <ul>
-        <li><a routerLink="/">Inicio</a></li>
-        <li><a routerLink="/sobre-nosotros">Sobre nosotros</a></li>
-        <li><a routerLink="/productos">Productos</a></li>
-        <li><a routerLink="/contacto">Contacto</a></li>
-    </ul>
-</nav>
-<a routerLink="/login">Iniciar sesión</a>
+    <a href="/"><img src="img/logo.png" alt="logo"></a>
+    <nav>
+        <ul>
+            <li><a routerLink="/">Inicio</a></li>
+            <li><a routerLink="/sobre-nosotros">Sobre nosotros</a></li>
+            <li><a routerLink="/productos">Productos</a></li>
+            <li><a routerLink="/contacto">Contacto</a></li>
+        </ul>
+    </nav>
+    @if (estaAutenticado) {
+      <a routerLink="/mi-cuenta">Mi Cuenta</a>
+    } @else {
+      <a routerLink="/login">Iniciar Sesión</a>
+    }
 </header>

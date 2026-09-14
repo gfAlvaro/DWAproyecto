@@ -18,10 +18,10 @@ export class AdminProductos implements OnInit {
   cargando = false;
   error = '';
 
- constructor(
-  private adminProductosService: AdminProductosService,
-  private cdr: ChangeDetectorRef
-) {}
+  constructor(
+    private adminProductosService: AdminProductosService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.cargarProductos();
@@ -34,53 +34,44 @@ export class AdminProductos implements OnInit {
 
     this.adminProductosService.obtenerProductos()
       .subscribe({
-
-    next: (productos) => {
-  this.productos = productos;
-  this.cargando = false;
-
-  this.cdr.detectChanges();
-},
+        next: (productos) => {
+          this.productos = productos;
+          this.cargando = false;
+          this.cdr.detectChanges();
+        },
         error: (error) => {
           this.cargando = false;
-          this.error =
-            'No se pudieron cargar los productos';
+          this.error = 'No se pudieron cargar los productos';
         }
-
-      });
+    });
   }
 
-abrirModalEliminar(producto: Producto): void {
-  this.productoAEliminar = producto;
-  this.mostrarModalEliminar = true;
-}
-
-cerrarModalEliminar(): void {
-  this.mostrarModalEliminar = false;
-  this.productoAEliminar = null;
-}
-
-confirmarEliminar(): void {
-  if (!this.productoAEliminar) {
-    return;
+  abrirModalEliminar(producto: Producto): void {
+    this.productoAEliminar = producto;
+    this.mostrarModalEliminar = true;
   }
 
-  const id = this.productoAEliminar['productoID'];
+  cerrarModalEliminar(): void {
+    this.mostrarModalEliminar = false;
+    this.productoAEliminar = null;
+  }
 
-  this.adminProductosService.eliminarProducto(id).subscribe({
-    next: () => {
-      this.productos = this.productos.filter(
-        producto => producto['productoID'] !== id
-      );
-
-      this.cerrarModalEliminar();
-    },
-
-    error: (error) => {
-      console.error('Error al eliminar el producto:', error);
-      alert('No se ha podido eliminar el producto.');
+  confirmarEliminar(): void {
+    if (!this.productoAEliminar) {
+      return;
     }
-  });
-}
 
+    const id = this.productoAEliminar['productoID'];
+
+    this.adminProductosService.eliminarProducto(id).subscribe({
+      next: () => {
+        this.productos = this.productos.filter( producto => producto['productoID'] !== id );
+        this.cerrarModalEliminar();
+      },
+      error: (error) => {
+        console.error('Error al eliminar el producto:', error);
+        alert('No se ha podido eliminar el producto.');
+      }
+    });
+  }
 }

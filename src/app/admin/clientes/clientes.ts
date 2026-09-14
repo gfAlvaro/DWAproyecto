@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-
 import { Component, OnInit } from '@angular/core';
 import { AdminClientesService } from '../../core/services/admin-clientes.service';
 import { Observable } from 'rxjs';
@@ -14,6 +13,7 @@ import { Observable } from 'rxjs';
 export class AdminClientes implements OnInit {
 
   constructor(private dataService: AdminClientesService) {}
+  
   clientes$!: Observable<any[]>;
 
   ngOnInit() {

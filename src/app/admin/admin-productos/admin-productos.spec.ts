@@ -7,11 +7,7 @@ describe('Productos', () => {
   let fixture: ComponentFixture<AdminProductos>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AdminProductos]
-    })
-    .compileComponents();
-
+    await TestBed.configureTestingModule({imports: [AdminProductos]}).compileComponents();
     fixture = TestBed.createComponent(AdminProductos);
     component = fixture.componentInstance;
     fixture.detectChanges();

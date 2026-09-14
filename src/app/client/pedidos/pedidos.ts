@@ -10,6 +10,7 @@ import { ClienteService, Pedido } from '../../core/services/cliente.service';
   templateUrl: './pedidos.html',
   styleUrl: './pedidos.scss'
 })
+
 export class Pedidos implements OnInit {
   pedidos: Pedido[] = [];
   cargando = true;

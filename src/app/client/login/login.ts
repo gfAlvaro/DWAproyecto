@@ -38,21 +38,15 @@ export class Login {
 
     this.cargando = true;
 
-    this.authService
-      .loginCliente(this.email, this.password)
-      .subscribe({
-
-        next: () => {
-          this.cargando = false;
-          this.router.navigate(['/mi-cuenta']);
-        },
-
-        error: (error) => {
-          this.cargando = false;
-          this.error =
-            error.error?.mensaje ||
-            'Error al iniciar sesión';
-        }
-      });
+    this.authService.loginCliente(this.email, this.password).subscribe({
+      next: () => {
+        this.cargando = false;
+        this.router.navigate(['/mi-cuenta']);
+      },
+      error: (error) => {
+        this.cargando = false;
+        this.error = error.error?.mensaje || 'Error al iniciar sesión';
+      }
+    });
   }
 }

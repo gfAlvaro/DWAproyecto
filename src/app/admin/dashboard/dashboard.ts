@@ -17,10 +17,7 @@ export class Dashboard {
   ) {}
 
   logout(): void {
-
     this.authService.logout();
-
     this.router.navigate(['/admin/login']);
-
   }
 }

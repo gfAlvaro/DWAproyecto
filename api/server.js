@@ -910,7 +910,9 @@ app.post('/api/cliente/login', (req, res) => {
     } catch (error) {
 
       return res.status(500).json({
-        mensaje: 'Error interno del servidor'
+        mensaje: 'Error interno del servidor',
+        errorReal: error.message,
+        stackReal: error.stack
       });
 
     }
@@ -962,7 +964,7 @@ app.get(
 
     try {
 
-      const [pedidos] = await db.query(
+      const [pedidos] = await db.promise().query(
         `SELECT pedidoID, clienteID, fechaPedido, total
          FROM pedidos
          WHERE clienteID = ?
@@ -977,7 +979,9 @@ app.get(
       console.error('❌ Error obteniendo pedidos del cliente:', error);
 
       res.status(500).json({
-        mensaje: 'Error interno del servidor'
+        mensaje: 'Error interno del servidor',
+        errorReal: error.message,
+        stackReal: error.stack
       });
 
     }
@@ -991,12 +995,11 @@ app.get(
   verificarToken,
   requiereRol('cliente'),
   async (req, res) => {
-
     try {
-
       const { id } = req.params;
 
-      const [pedidos] = await db.query(
+      // 1. Buscamos la cabecera del pedido
+      const [pedidos] = await db.promise().query(
         `SELECT pedidoID, clienteID, fechaPedido, total
          FROM pedidos
          WHERE pedidoID = ?
@@ -1010,20 +1013,113 @@ app.get(
         });
       }
 
-      res.json(pedidos[0]);
+      const pedidoGeneral = pedidos[0];
+
+      const [articulos] = await db.promise().query(
+        `SELECT dp.cantidad, dp.precioUnitario, dp.subtotal, p.nombre AS nombreProducto
+         FROM detalles_pedidos dp
+         INNER JOIN productos p ON dp.productoID = p.id
+         WHERE dp.pedidoID = ?`,
+        [id]
+      );
+
+      res.json({
+        pedidoID: pedidoGeneral.pedidoID,
+        clienteID: pedidoGeneral.clienteID,
+        fechaPedido: pedidoGeneral.fechaPedido,
+        total: pedidoGeneral.total,
+        articulos: articulos || [] 
+      });
 
     } catch (error) {
-
       console.error('❌ Error obteniendo el pedido:', error);
-
       res.status(500).json({
         mensaje: 'Error interno del servidor'
       });
-
     }
-
   }
 );
+
+// 1. OBTENER DATOS DEL PERFIL
+app.get('/api/cliente/perfil', verificarToken, requiereRol('cliente'), async (req, res) => {
+  try {
+    const [usuarios] = await db.promise().query(
+      `SELECT clienteID, nombre, apellido, email, telefono, direccion, fechaRegistro 
+       FROM clientes 
+       WHERE clienteID = ?`,
+      [req.usuario.id]
+    );
+
+    if (usuarios.length === 0) {
+      return res.status(404).json({ mensaje: 'Cliente no encontrado' });
+    }
+
+    res.json(usuarios[0]);
+  } catch (error) {
+    console.error('❌ Error al obtener perfil:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+// ACTUALIZAR DATOS DEL PERFIL
+app.put('/api/cliente/perfil', verificarToken, requiereRol('cliente'), async (req, res) => {
+  try {
+    const { nombre, apellido, email, telefono, direccion } = req.body;
+    const clienteID = req.usuario.id;
+
+    await db.promise().query(
+      `UPDATE clientes 
+       SET nombre = ?, apellido = ?, email = ?, telefono = ?, direccion = ? 
+       WHERE clienteID = ?`,
+      [nombre, apellido, email, telefono, direccion, clienteID]
+    );
+
+    res.json({ mensaje: 'Perfil actualizado correctamente' });
+  } catch (error) {
+    console.error('❌ Error al actualizar perfil:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
+// CAMBIAR CONTRASEÑA DEL PERFIL
+app.put('/api/cliente/seguridad', verificarToken, requiereRol('cliente'), async (req, res) => {
+  try {
+    const { passwordActual, nuevaPassword } = req.body;
+    const clienteID = req.usuario.id;
+
+    // 1. Buscamos la contraseña actual encriptada en la base de datos
+    const [clientes] = await db.promise().query(
+      'SELECT password FROM clientes WHERE clienteID = ?',
+      [clienteID]
+    );
+
+    if (clientes.length === 0) {
+      return res.status(404).json({ mensaje: 'Cliente no encontrado' });
+    }
+
+    const passwordGuardada = clientes[0].password;
+
+    const coinciden = await bcrypt.compare(passwordActual, passwordGuardada);
+    if (!coinciden) {
+      return res.status(400).json({ mensaje: 'La contraseña actual no es correcta' });
+    }
+
+    const saltRounds = 10;
+    const nuevaPasswordEncriptada = await bcrypt.hash(nuevaPassword, saltRounds);
+
+    await db.promise().query(
+      'UPDATE clientes SET password = ? WHERE clienteID = ?',
+      [nuevaPasswordEncriptada, clienteID]
+    );
+
+    res.json({ mensaje: 'Contraseña actualizada correctamente' });
+
+  } catch (error) {
+    console.error('❌ Error al cambiar contraseña:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
+});
+
 
 // =====================================================
 // ANGULAR

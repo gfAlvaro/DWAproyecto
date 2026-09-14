@@ -34,13 +34,10 @@
               <td>{{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ pedido.total | currency:'EUR':'symbol':'1.2-2' }}</td>
               <td>
-                <!-- Opcional: Clases dinámicas según el estado si lo devuelves en tu query -->
                 <span class="status-badge string">Completado</span>
               </td>
               <td>
-                <button class="btn-view" [routerLink]="['/mi-cuenta/pedidos', pedido.pedidoID]">
-                  Ver Detalles
-                </button>
+                <button class="btn-view" [routerLink]="['/mi-cuenta/pedidos', pedido.pedidoID]">Ver Detalles</button>
               </td>
             </tr>
           }

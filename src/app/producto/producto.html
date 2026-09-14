@@ -1,39 +1,27 @@
 <section class="producto" *ngIf="producto">
-
   <div class="producto-imagen">
-
     <img
       *ngIf="producto.pathImagen"
       [src]="producto.pathImagen"
       [alt]="producto.nombreProducto"
     >
-
     <div *ngIf="!producto.pathImagen" class="sin-imagen">
       Sin imagen disponible
     </div>
-
   </div>
-
   <div class="producto-info">
-
     <h1>{{ producto.nombreProducto }}</h1>
-
     <p class="descripcion">
       {{ producto.descripcion }}
     </p>
-
     <p class="precio">
       {{ producto.precio }} €
     </p>
-
     <p *ngIf="producto.stock > 0" class="stock">
       Stock disponible: {{ producto.stock }}
     </p>
-
     <p *ngIf="producto.stock === 0" class="agotado">
       Producto agotado
     </p>
-
   </div>
-
 </section>

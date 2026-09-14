@@ -1,5 +1,4 @@
 <h2>Pedidos</h2>
-
 <table>
   <thead>
     <tr>
@@ -11,7 +10,6 @@
       <th>acciones</th>
     </tr>
   </thead>
-
   <tbody>
   @for (pedido of (pedidos$ | async ); track pedido.pedidoID) {
       <tr>

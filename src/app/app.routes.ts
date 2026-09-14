@@ -9,80 +9,69 @@ import { adminGuard } from './guards/admin.guard';
 import { clienteGuard } from './guards/client.guard';
 import { PublicLayout } from './public-layout/public-layout';
 import { AdminLayout } from './admin/admin-layout/admin-layout';
+import { MiCuenta } from './client/mi-cuenta/mi-cuenta';
 
 export const routes: Routes = [
 
-  // =========================
   // PARTE PÚBLICA
-  // =========================
   {
     path: '',
     component: PublicLayout,
     children: [
-      { path: '', component: Inicio },
-      { path: 'login', component: Login },
-      { path: 'sobre-nosotros', component: SobreNosotros },
-      { path: 'productos', component: Productos },
+      { path: '', component: Inicio, data: { title: 'Inicio | Fractals', description: 'Tu tienda online.' } },
+      { path: 'login', component: Login, data: { title: 'Login | Fractals', description: 'Inicia sesión en tu cuenta.' }  },
+      { path: 'sobre-nosotros', component: SobreNosotros, data: { title: 'Sobre Nosotros | Fractals', description: 'Conoce más sobre nosotros.' }  },
+      { path: 'productos', component: Productos, data: { title: 'Nuestros Productos | Fractals', description: 'Explora nuestra selección de productos.' }  },
       { path: 'productos/:slug', component: Producto },
-      { path: 'contacto', component: Contacto }
+      { path: 'contacto', component: Contacto, data: { title: 'Contacto | Fractals', description: 'Contáctanos para más información.' } }
     ]
   },
 
-// =========================
-// ÁREA DE CLIENTE
-// =========================
-{
-  path: 'mi-cuenta',
-  canActivate: [clienteGuard],
-  loadComponent: () =>
-    import('./client/mi-cuenta/mi-cuenta')
-      .then(m => m.MiCuenta)
-},
-/*{
-  path: 'mi-cuenta',
-  canActivate: [clienteGuard],
-  children: [
+  // ÁREA DE CLIENTE
+  {
+    path: 'mi-cuenta',
+    component: MiCuenta,
+    canActivate: [clienteGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./client/dashboard/dashboard')
+            .then(m => m.Dashboard)
+      },
+      {
+        path: 'pedidos',
+        loadComponent: () =>
+          import('./client/pedidos/pedidos')
+            .then(m => m.Pedidos)
+      },
+      {
+        path: 'pedidos/:id',
+        loadComponent: () =>
+          import('./client/detalle-pedido/detalle-pedido')
+            .then(m => m.DetallePedidos)
+      },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./client/perfil/perfil')
+            .then(m => m.Perfil)
+      },
+      {
+        path: 'seguridad',
+        loadComponent: () =>
+          import('./client/seguridad/seguridad')
+            .then(m => m.Seguridad)
+      }
+    ]
+  },
 
-    {
-      path: '',
-      loadComponent: () =>
-        import('./client/mi-cuenta/mi-cuenta')
-          .then(m => m.MiCuenta)
-    },
-
-    {
-      path: 'pedidos',
-      loadComponent: () =>
-        import('./client/pedidos/pedidos')
-          .then(m => m.Pedidos)
-    },
-
-    {
-      path: 'pedidos/:id',
-      loadComponent: () =>
-        import('./client/detalle-pedido/detalle-pedido')
-          .then(m => m.DetallePedido)
-    },
-
-    {
-      path: 'perfil',
-      loadComponent: () =>
-        import('./client/perfil/perfil')
-          .then(m => m.Perfil)
-    }
-
-  ]
-},*/
-
-  // =========================
   // ADMIN
-  // =========================
   {
     path: 'admin',
     component: AdminLayout,
     canActivate: [adminGuard],
     children: [
-
       {
         path: 'dashboard',
         loadComponent: () =>
@@ -132,7 +121,6 @@ export const routes: Routes = [
           import('./admin/detalles-pedido/detalles-pedido')
             .then(m => m.DetallesPedido)
       }
-
     ]
   },
 

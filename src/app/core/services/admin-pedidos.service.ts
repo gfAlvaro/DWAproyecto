@@ -12,9 +12,6 @@ export class AdminPedidosService {
 
   constructor(private http: HttpClient) {}
 
-  // =========================
-  // OBTENER TODOS
-  // =========================
   obtenerPedidos(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }

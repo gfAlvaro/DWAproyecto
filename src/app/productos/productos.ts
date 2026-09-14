@@ -12,10 +12,10 @@ import { Observable } from 'rxjs';
 export class Productos implements OnInit {
 
   constructor(private dataService: ApiService) {}
+  
   productos$!: Observable<any[]>;
 
   ngOnInit() {
   this.productos$ = this.dataService.getProductos();
   }
-  
 }

@@ -12,9 +12,6 @@ export class AdminClientesService {
 
   constructor(private http: HttpClient) {}
 
-  // =========================
-  // OBTENER TODOS
-  // =========================
   obtenerClientes(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }

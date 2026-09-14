@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../core/services/api';
+import { SeoService } from '../core/services/seo.service';
 
 @Component({
   selector: 'app-producto',
@@ -11,20 +12,19 @@ import { ApiService } from '../core/services/api';
   styleUrl: './producto.scss'
 })
 export class Producto implements OnInit {
-[x: string]: any;
+  [x: string]: any; 
 
   producto: any = null;
 
   constructor(
     private route: ActivatedRoute,
+    private seoService: SeoService,
     private api: ApiService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-
     this.route.paramMap.subscribe(params => {
-
       const slug = params.get('slug');
 
       if (!slug) {
@@ -32,21 +32,23 @@ export class Producto implements OnInit {
       }
 
       this.api.getProducto(slug).subscribe({
-
-        next: producto => {
-
+        next: (producto) => {
           this.producto = producto;
+          
+          if (producto) {
+            console.log('API de producto respondió con éxito para SEO:', producto);
+            this.seoService.updateData(
+              `${producto.name || producto.nombreProducto || 'Producto'} | Fractals`,
+              producto.shortDescription || 'Compra este producto al mejor precio.'
+            );
+          }
 
-          // Forzar actualización de la vista
           this.cdr.detectChanges();
         },
-
-        error: error => {
+        error: (error) => {
           console.error('Error al obtener producto:', error);
         }
-
       });
-
     });
   }
 }
