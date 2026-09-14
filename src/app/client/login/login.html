@@ -1,40 +1,20 @@
 <div class="client-login">
   <h1>Iniciar sesión</h1>
   <form (ngSubmit)="login()">
-
     <div>
       <label>Email: </label>
-
-      <input
-        type="email"
-        name="email"
-        [(ngModel)]="email"
-        autocomplete="username"
-      >
+      <input type="email" name="email" [(ngModel)]="email" autocomplete="username">
     </div>
-
     <div>
       <label>Contraseña: </label>
-
-      <input
-        type="password"
-        name="password"
-        [(ngModel)]="password"
-        autocomplete="current-password"
-      >
+      <input type="password" name="password" [(ngModel)]="password" autocomplete="current-password">
     </div>
-
     <div *ngIf="error">
       {{ error }}
     </div>
-
-    <button
-      type="submit"
-      [disabled]="cargando"
-    >
+    <button type="submit" [disabled]="cargando">
       {{ cargando ? 'Entrando...' : 'Iniciar sesión' }}
     </button>
-
   </form>
   <p>¿Aún no tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
 </div>

@@ -1,11 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import {
-  Router,
-  RouterLink,
-  RouterOutlet,
-  RouterLinkActive
-} from '@angular/router';
-
+import { Router, RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -19,6 +13,7 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './mi-cuenta.html',
   styleUrl: './mi-cuenta.scss'
 })
+
 export class MiCuenta implements OnInit {
 
   constructor(

@@ -8,13 +8,11 @@
   } @else if (error) {
     <div class="error-box"><p>{{ error }}</p></div>
   } @else if (pedido) {
-    <!-- Info General -->
     <div class="pedido-resumen">
       <p><strong>Nº Pedido:</strong> #{{ pedido.pedidoID }}</p>
       <p><strong>Fecha de compra:</strong> {{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}</p>
       <p><strong>Total pagado:</strong> {{ pedido.total | currency:'EUR':'symbol':'1.2-2' }}</p>
     </div>
-    <!-- Tabla de Artículos -->
     <h3>Artículos en este pedido</h3>
     <div class="table-responsive">
       <table class="productos-table">
@@ -32,7 +30,7 @@
                 <td>{{ item.nombreProducto }}</td>
                 <td>{{ item.cantidad }}</td>
                 <td>{{ item.precioUnitario | currency:'EUR' }}</td>
-                <td>{{ item.subtotal | currency:'EUR' }}</td> <!-- Usamos el subtotal directo de la DB -->
+                <td>{{ item.subtotal | currency:'EUR' }}</td>
             </tr>
         }
         </tbody>

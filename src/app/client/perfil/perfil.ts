@@ -72,16 +72,13 @@ export class Perfil implements OnInit {
       next: (res) => {
         this.mensajeExito = res.mensaje;
         this.enviando = false;
-
         const datosNuevos = this.perfilForm.value;
         const clienteActual = localStorage.getItem('cliente');
         
         if (clienteActual) {
           const clienteObjeto = JSON.parse(clienteActual);
           const clienteActualizado = { ...clienteObjeto, ...datosNuevos };
-          
           localStorage.setItem('cliente', JSON.stringify(clienteActualizado));
-          
           this.authService.perfilActualizado$.next(); 
         }
 
@@ -90,5 +87,4 @@ export class Perfil implements OnInit {
       error: (err) => { /* ... */ }
     });
   }
-
 }

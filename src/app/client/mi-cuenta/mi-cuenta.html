@@ -1,81 +1,30 @@
 <div class="cliente-layout">
-
   <aside class="sidebar">
-
     <div class="logo">
       Mi cuenta
     </div>
-
     <nav>
-
-      <a
-        routerLink="/mi-cuenta"
-        routerLinkActive="activo"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        Inicio
-      </a>
-
-      <a
-        routerLink="/mi-cuenta/pedidos"
-        routerLinkActive="activo"
-      >
-        Mis pedidos
-      </a>
-
-      <a
-        routerLink="/mi-cuenta/perfil"
-        routerLinkActive="activo"
-      >
-        Mi perfil
-      </a>
-
-      <a
-        routerLink="/mi-cuenta/seguridad"
-        routerLinkActive="activo"
-      >
-        Seguridad
-      </a>
-
+      <a routerLink="/mi-cuenta" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+      <a routerLink="/mi-cuenta/pedidos" routerLinkActive="activo">Mis pedidos</a>
+      <a routerLink="/mi-cuenta/perfil" routerLinkActive="activo">Mi perfil</a>
+      <a routerLink="/mi-cuenta/seguridad" routerLinkActive="activo">Seguridad</a>
     </nav>
-
-    <button
-      type="button"
-      (click)="logout()"
-    >
-      Cerrar sesión
-    </button>
-
+    <button type="button" (click)="logout()" >Cerrar sesión</button>
   </aside>
-
-
   <main class="contenido">
-
     <header class="topbar">
-
       <div>
         Mi cuenta
       </div>
-
       <a routerLink="/">Volver a la tienda</a>
-
       <div class="usuario">
-
         @if (cliente) {
           {{ cliente.nombre }} {{ cliente.apellido }}
         }
-
       </div>
-
     </header>
-
-
     <section class="pagina">
-
       <router-outlet></router-outlet>
-
     </section>
-
   </main>
-
 </div>

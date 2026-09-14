@@ -10,6 +10,7 @@ import { ClienteService, DetallePedido } from '../../core/services/cliente.servi
   templateUrl: './detalle-pedido.html',
   styleUrl: './detalle-pedido.scss'
 })
+
 export class DetallePedidos implements OnInit {
   pedido: DetallePedido | null = null;
   cargando = true;

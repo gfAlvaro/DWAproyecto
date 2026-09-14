@@ -14,6 +14,7 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
+
 export class Login {
 
   email = '';
@@ -42,17 +43,12 @@ export class Login {
       .subscribe({
 
         next: () => {
-
           this.cargando = false;
-
           this.router.navigate(['/mi-cuenta']);
-
         },
 
         error: (error) => {
-
           this.cargando = false;
-
           this.error =
             error.error?.mensaje ||
             'Error al iniciar sesión';

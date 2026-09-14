@@ -3,30 +3,24 @@
     <h2>Cambiar Contraseña</h2>
     <a routerLink="/mi-cuenta" class="btn-back">Volver al Dashboard</a>
   </div>
-
   @if (mensajeExito) { <div class="alert-success">{{ mensajeExito }}</div> }
   @if (error) { <div class="alert-danger">{{ error }}</div> }
-
   <form [formGroup]="passwordForm" (ngSubmit)="guardarPassword()" class="password-form">
     <div class="form-group">
       <label>Contraseña Actual</label>
       <input type="password" formControlName="passwordActual" />
     </div>
-
     <div class="form-group">
       <label>Nueva Contraseña (mínimo 6 caracteres)</label>
       <input type="password" formControlName="nuevaPassword" />
     </div>
-
     <div class="form-group">
       <label>Confirmar Nueva Contraseña</label>
       <input type="password" formControlName="confirmarPassword" />
-      
       @if (passwordForm.errors?.['noCoinciden'] && passwordForm.get('confirmarPassword')?.touched) {
         <span class="error-text">Las nuevas contraseñas no coinciden.</span>
       }
     </div>
-
     <button type="submit" [disabled]="passwordForm.invalid || enviando" class="btn-save">
       {{ enviando ? 'Actualizando...' : 'Actualizar Contraseña' }}
     </button>
