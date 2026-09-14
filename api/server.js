@@ -11,10 +11,8 @@ const cors = require('cors');
 const app = express();
 const verificarToken = require('./middleware/auth');
 const requiereRol = require('./middleware/roles');
-
 app.use(cors());
 app.use(express.json());
-
 const JWT_SECRET = process.env.JWT_SECRET;
 
 process.on('uncaughtException', (err) => {
@@ -36,9 +34,7 @@ db.connect(err => {
 
 const PORT = process.env.PORT || 3000;
 
-// =====================================================
 // CONFIGURACIÓN DE IMÁGENES DE PRODUCTOS
-// =====================================================
 const carpetaImagenesProductos = path.join(
   __dirname,
   'httpdocs',
@@ -47,9 +43,7 @@ const carpetaImagenesProductos = path.join(
 );
 
 if (!fs.existsSync(carpetaImagenesProductos)) {
-  fs.mkdirSync(carpetaImagenesProductos, {
-    recursive: true
-  });
+  fs.mkdirSync(carpetaImagenesProductos, { recursive: true });
 }
 
 const storage = multer.diskStorage({
@@ -58,30 +52,19 @@ const storage = multer.diskStorage({
   },
 
   filename: (req, file, cb) => {
-    const extension =
-      path.extname(file.originalname).toLowerCase();
-
-    const nombreUnico =
-      crypto.randomUUID() + extension;
-
+    const extension = path.extname(file.originalname).toLowerCase();
+    const nombreUnico = crypto.randomUUID() + extension;
     cb(null, nombreUnico);
   }
 });
 
 const uploadImagen = multer({
   storage,
-
-  limits: {
-    fileSize: 5 * 1024 * 1024
-  },
-
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (!file.mimetype.startsWith('image/')) {
-      return cb(
-        new Error('El archivo debe ser una imagen')
-      );
+      return cb( new Error('El archivo debe ser una imagen') );
     }
-
     cb(null, true);
   }
 });
@@ -113,16 +96,11 @@ app.get('/api/productos', (req, res) => {
 // OBTENER UN PRODUCTO POR SLUG
 app.get('/api/productos/:slug', (req, res) => {
 
-  console.log(
-    '--- 📥 Petición recibida en /api/productos/:slug ---'
-  );
+  console.log('--- 📥 Petición recibida en /api/productos/:slug ---');
 
   const { slug } = req.params;
 
-  console.log(
-    '🔎 Buscando producto con slug:',
-    slug
-  );
+  console.log('🔎 Buscando producto con slug:', slug);
 
   const sql = `
     SELECT
@@ -138,18 +116,10 @@ app.get('/api/productos/:slug', (req, res) => {
     LIMIT 1
   `;
 
-  db.query(
-    sql,
-    [slug],
-    (err, results) => {
+  db.query( sql, [slug], (err, results) => {
 
       if (err) {
-
-        console.error(
-          '❌ ERROR REAL EN MYSQL:',
-          err.message
-        );
-
+        console.error( '❌ ERROR REAL EN MYSQL:', err.message);
         return res.status(500).json({
           mensaje: 'Error en la base de datos',
           errorDetallado: err.message,
@@ -158,21 +128,13 @@ app.get('/api/productos/:slug', (req, res) => {
       }
 
       if (results.length === 0) {
-
-        console.log(
-          '⚠️ Producto no encontrado:',
-          slug
-        );
-
+        console.log( '⚠️ Producto no encontrado:', slug );
         return res.status(404).json({
           mensaje: 'Producto no encontrado'
         });
       }
 
-      console.log(
-        '✅ Producto encontrado:',
-        results[0].nombreProducto
-      );
+      console.log( '✅ Producto encontrado:', results[0].nombreProducto );
 
       res.json(results[0]);
     }
@@ -206,35 +168,23 @@ app.post('/api/admin/login', (req, res) => {
 
     if (err) {
       console.error('❌ Error buscando administrador:', err.message);
-
-      return res.status(500).json({
-        mensaje: 'Error interno del servidor'
-      });
+      return res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
 
     if (results.length === 0) {
-      return res.status(401).json({
-        mensaje: 'Email o contraseña incorrectos'
-      });
+      return res.status(401).json({ mensaje: 'Email o contraseña incorrectos' });
     }
 
     const administrador = results[0];
 
     if (!administrador.activo) {
-      return res.status(403).json({
-        mensaje: 'La cuenta está desactivada'
-      });
+      return res.status(403).json({ mensaje: 'La cuenta está desactivada' });
     }
 
-    const passwordCorrecta = await bcrypt.compare(
-      password,
-      administrador.password
-    );
+    const passwordCorrecta = await bcrypt.compare( password, administrador.password );
 
     if (!passwordCorrecta) {
-      return res.status(401).json({
-        mensaje: 'Email o contraseña incorrectos'
-      });
+      return res.status(401).json({ mensaje: 'Email o contraseña incorrectos' });
     }
 
     const token = jwt.sign(
@@ -263,16 +213,11 @@ app.post('/api/admin/login', (req, res) => {
   });
 });
 
-// =====================================================
-// ADMIN - PRODUCTOS
-// =====================================================
+
+// --- ADMIN - PRODUCTOS ---
 
 // OBTENER TODOS LOS PRODUCTOS
-app.get(
-  '/api/admin/productos',
-  verificarToken,
-  requiereRol('administrador'),
-  (req, res) => {
+app.get( '/api/admin/productos', verificarToken, requiereRol('administrador'), (req, res) => {
 
     const sql = `
       SELECT
@@ -291,14 +236,8 @@ app.get(
     db.query(sql, (err, results) => {
 
       if (err) {
-        console.error(
-          '❌ Error obteniendo productos:',
-          err.message
-        );
-
-        return res.status(500).json({
-          mensaje: 'Error en la base de datos'
-        });
+        console.error( '❌ Error obteniendo productos:', err.message );
+        return res.status(500).json({ mensaje: 'Error en la base de datos' });
       }
 
       res.json(results);
@@ -306,16 +245,8 @@ app.get(
   }
 );
 
-// =====================================================
 // CREAR UN NUEVO PRODUCTO
-// =====================================================
-
-app.post(
-  '/api/admin/productos',
-  verificarToken,
-    requiereRol('administrador'),
-  uploadImagen.single('imagen'),
-  (req, res) => {
+app.post( '/api/admin/productos', verificarToken, requiereRol('administrador'), uploadImagen.single('imagen'), (req, res) => {
 
     const {
       nombreProducto,
@@ -325,48 +256,26 @@ app.post(
       stock
     } = req.body;
 
-    // -----------------------------------------
     // Validaciones
-    // -----------------------------------------
-
-    if (
-      !nombreProducto ||
-      !slug ||
-      precio === undefined
-    ) {
+    if ( !nombreProducto || !slug || precio === undefined ) {
 
       // Si se había subido una imagen pero faltan
       // datos obligatorios, eliminamos la imagen
       if (req.file) {
-        fs.unlink(
-          req.file.path,
-          () => {}
-        );
+        fs.unlink( req.file.path, () => {} );
       }
 
-      return res.status(400).json({
-        mensaje:
-          'Nombre, slug y precio son obligatorios'
-      });
+      return res.status(400).json({ mensaje: 'Nombre, slug y precio son obligatorios' });
     }
 
-    // -----------------------------------------
     // Ruta que guardaremos en MySQL
-    // -----------------------------------------
-
     let pathImagen = null;
 
     if (req.file) {
-
-      pathImagen =
-        `/img/productos/${req.file.filename}`;
-
+      pathImagen = `/img/productos/${req.file.filename}`;
     }
 
-    // -----------------------------------------
     // Insertar producto
-    // -----------------------------------------
-
     const sql = `
       INSERT INTO productos
       (
@@ -389,72 +298,39 @@ app.post(
       pathImagen
     ];
 
-    db.query(
-      sql,
-      valores,
-      (err, result) => {
+    db.query( sql, valores, (err, result) => {
 
         if (err) {
-
-          console.error(
-            '❌ Error creando producto:',
-            err.message
-          );
+          console.error( '❌ Error creando producto:', err.message );
 
           // Si MySQL falla, borrar imagen subida
           if (req.file) {
-            fs.unlink(
-              req.file.path,
-              () => {}
-            );
+            fs.unlink( req.file.path, () => {} );
           }
 
           // Slug duplicado
           if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({
-              mensaje:
-                'Ya existe un producto con ese slug.'
-            });
+            return res.status(409).json({ mensaje: 'Ya existe un producto con ese slug.' });
           }
 
-          return res.status(500).json({
-            mensaje:
-              'Error creando producto'
-          });
+          return res.status(500).json({ mensaje: 'Error creando producto' });
         }
 
-        // -----------------------------------------
         // Todo correcto
-        // -----------------------------------------
-
         res.status(201).json({
-
-          mensaje:
-            'Producto creado correctamente',
-
-          productoID:
-            result.insertId,
-
+          mensaje: 'Producto creado correctamente',
+          productoID: result.insertId,
           pathImagen
-
         });
-
       }
     );
-
   }
 );
 
 // editar producto existente
-app.put(
-  '/api/admin/productos/:id',
-  verificarToken,
-  requiereRol('administrador'),
-  uploadImagen.single('imagen'),
-  (req, res) => {
+app.put( '/api/admin/productos/:id', verificarToken, requiereRol('administrador'), uploadImagen.single('imagen'), (req, res) => {
 
     const { id } = req.params;
-
     const {
       nombreProducto,
       slug,
@@ -463,33 +339,20 @@ app.put(
       stock
     } = req.body;
 
-    // -----------------------------------------
     // Validaciones
-    // -----------------------------------------
-
-    if (
-      !nombreProducto ||
-      !slug ||
-      precio === undefined
+    if ( !nombreProducto || !slug || precio === undefined
     ) {
 
-      // Si se subió una imagen pero los datos
-      // son incorrectos, eliminamos la nueva imagen
+      // Si se subió una imagen pero los datos son incorrectos, eliminamos la nueva imagen
       if (req.file) {
         fs.unlink(req.file.path, () => {});
       }
 
-      return res.status(400).json({
-        mensaje:
-          'Nombre, slug y precio son obligatorios'
-      });
+      return res.status(400).json({ mensaje: 'Nombre, slug y precio son obligatorios' });
     }
 
-    // -----------------------------------------
     // Primero obtenemos el producto actual
     // para conocer su imagen antigua
-    // -----------------------------------------
-
     const sqlProducto = `
       SELECT
         pathImagen
@@ -498,62 +361,38 @@ app.put(
       LIMIT 1
     `;
 
-    db.query(
-      sqlProducto,
-      [id],
-      (err, resultados) => {
+    db.query( sqlProducto, [id], (err, resultados) => {
 
         if (err) {
-
-          console.error(
-            '❌ Error obteniendo producto:',
-            err.message
-          );
+          console.error( '❌ Error obteniendo producto:', err.message );
 
           if (req.file) {
             fs.unlink(req.file.path, () => {});
           }
 
-          return res.status(500).json({
-            mensaje: 'Error en la base de datos'
-          });
+          return res.status(500).json({ mensaje: 'Error en la base de datos' });
         }
 
-        // -----------------------------------------
         // Producto no existe
-        // -----------------------------------------
-
         if (resultados.length === 0) {
 
           if (req.file) {
             fs.unlink(req.file.path, () => {});
           }
 
-          return res.status(404).json({
-            mensaje: 'Producto no encontrado'
-          });
+          return res.status(404).json({ mensaje: 'Producto no encontrado' });
         }
 
-        const imagenAnterior =
-          resultados[0].pathImagen;
+        const imagenAnterior = resultados[0].pathImagen;
 
-        // -----------------------------------------
         // Determinar imagen que guardaremos
-        // -----------------------------------------
-
         let pathImagen = imagenAnterior;
 
         if (req.file) {
-
-          pathImagen =
-            `/img/productos/${req.file.filename}`;
-
+          pathImagen = `/img/productos/${req.file.filename}`;
         }
 
-        // -----------------------------------------
         // Actualizar producto
-        // -----------------------------------------
-
         const sqlUpdate = `
           UPDATE productos
           SET
@@ -576,17 +415,10 @@ app.put(
           id
         ];
 
-        db.query(
-          sqlUpdate,
-          valores,
-          (err, result) => {
+        db.query( sqlUpdate, valores, (err, result) => {
 
             if (err) {
-
-              console.error(
-                '❌ Error actualizando producto:',
-                err.message
-              );
+              console.error( '❌ Error actualizando producto:', err.message );
 
               // Eliminar la nueva imagen si MySQL falla
               if (req.file) {
@@ -594,83 +426,42 @@ app.put(
               }
 
               if (err.code === 'ER_DUP_ENTRY') {
-                return res.status(409).json({
-                  mensaje:
-                    'Ya existe un producto con ese slug.'
-                });
+                return res.status(409).json({ mensaje: 'Ya existe un producto con ese slug.' });
               }
 
-              return res.status(500).json({
-                mensaje:
-                  'Error actualizando producto'
-              });
+              return res.status(500).json({ mensaje: 'Error actualizando producto' });
             }
 
-            // -----------------------------------------
             // Si se ha subido una imagen nueva,
             // eliminar la imagen antigua
-            // -----------------------------------------
-
-            if (
-              req.file &&
-              imagenAnterior
+            if ( req.file && imagenAnterior
             ) {
-
-              const nombreImagenAnterior =
-                path.basename(imagenAnterior);
-
-              const rutaImagenAnterior =
-                path.join(
+              const nombreImagenAnterior = path.basename(imagenAnterior);
+              const rutaImagenAnterior = path.join(
                   carpetaImagenesProductos,
                   nombreImagenAnterior
                 );
 
-              fs.unlink(
-                rutaImagenAnterior,
-                (error) => {
-
-                  if (error && error.code !== 'ENOENT') {
-
-                    console.error(
-                      '⚠️ No se pudo eliminar la imagen anterior:',
-                      error.message
-                    );
-
-                  }
-
+              fs.unlink( rutaImagenAnterior, (error) => {
+                if (error && error.code !== 'ENOENT') {
+                  console.error( '⚠️ No se pudo eliminar la imagen anterior:', error.message );
                 }
-              );
+              });
             }
 
-            // -----------------------------------------
             // Respuesta
-            // -----------------------------------------
-
-            res.json({
-              mensaje:
-                'Producto actualizado correctamente',
-
-              pathImagen
-            });
-
+            res.json({ mensaje: 'Producto actualizado correctamente', pathImagen });
           }
         );
-
       }
     );
-
   }
 );
 
 // eliminar un producto
-app.delete(
-  '/api/admin/productos/:id',
-  verificarToken,
-  requiereRol('administrador'),
-  (req, res) => {
+app.delete( '/api/admin/productos/:id', verificarToken, requiereRol('administrador'), (req, res) => {
 
     const { id } = req.params;
-
     const sql = `
       DELETE FROM productos
       WHERE productoID = ?
@@ -679,39 +470,23 @@ app.delete(
     db.query(sql, [id], (err, result) => {
 
       if (err) {
-
-        console.error(
-          '❌ Error eliminando producto:',
-          err.message
-        );
-
-        return res.status(500).json({
-          mensaje: 'Error eliminando producto'
-        });
+        console.error( '❌ Error eliminando producto:', err.message );
+        return res.status(500).json({ mensaje: 'Error eliminando producto' });
       }
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({
-          mensaje: 'Producto no encontrado'
-        });
+        return res.status(404).json({ mensaje: 'Producto no encontrado' });
       }
 
-      res.json({
-        mensaje: 'Producto eliminado correctamente'
-      });
+      res.json({ mensaje: 'Producto eliminado correctamente' });
     });
   }
 );
 
 // OBTENER UN PRODUCTO POR ID
-app.get(
-  '/api/admin/productos/:id',
-  verificarToken,
-  requiereRol('administrador'),
-  (req, res) => {
+app.get( '/api/admin/productos/:id', verificarToken, requiereRol('administrador'), (req, res) => {
 
     const { id } = req.params;
-
     const sql = `
       SELECT
         productoID,
@@ -724,28 +499,17 @@ app.get(
         pathImagen
       FROM productos
       WHERE productoID = ?
-      LIMIT 1
-    `;
+      LIMIT 1`;
 
     db.query(sql, [id], (err, results) => {
 
       if (err) {
-
-        console.error(
-          '❌ Error obteniendo producto:',
-          err.message
-        );
-
-        return res.status(500).json({
-          mensaje: 'Error en la base de datos'
-        });
+        console.error( '❌ Error obteniendo producto:', err.message );
+        return res.status(500).json({ mensaje: 'Error en la base de datos' });
       }
 
       if (results.length === 0) {
-
-        return res.status(404).json({
-          mensaje: 'Producto no encontrado'
-        });
+        return res.status(404).json({ mensaje: 'Producto no encontrado' });
       }
 
       res.json(results[0]);
@@ -754,11 +518,7 @@ app.get(
 );
 
 // OBTENER TODOS LOS CLIENTES
-app.get(
-  '/api/admin/clientes',
-  verificarToken,
-  requiereRol('administrador'),
-  (req, res) => {
+app.get( '/api/admin/clientes', verificarToken, requiereRol('administrador'), (req, res) => {
 
     const sql = `
       SELECT
@@ -776,14 +536,8 @@ app.get(
     db.query(sql, (err, results) => {
 
       if (err) {
-        console.error(
-          '❌ Error obteniendo clientes:',
-          err.message
-        );
-
-        return res.status(500).json({
-          mensaje: 'Error en la base de datos'
-        });
+        console.error( '❌ Error obteniendo clientes:', err.message );
+        return res.status(500).json({ mensaje: 'Error en la base de datos' });
       }
 
       res.json(results);
@@ -792,11 +546,7 @@ app.get(
 );
 
 // OBTENER TODOS LOS PEDIDOS
-app.get(
-  '/api/admin/pedidos',
-  verificarToken,
-  requiereRol('administrador'),
-  (req, res) => {
+app.get( '/api/admin/pedidos', verificarToken, requiereRol('administrador'), (req, res) => {
 
     const sql = `
       SELECT
@@ -811,14 +561,8 @@ app.get(
     db.query(sql, (err, results) => {
 
       if (err) {
-        console.error(
-          '❌ Error obteniendo pedidos:',
-          err.message
-        );
-
-        return res.status(500).json({
-          mensaje: 'Error en la base de datos'
-        });
+        console.error( '❌ Error obteniendo pedidos:', err.message );
+        return res.status(500).json({ mensaje: 'Error en la base de datos' });
       }
 
       res.json(results);
@@ -832,9 +576,7 @@ app.post('/api/cliente/login', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({
-      mensaje: 'Email y contraseña son obligatorios'
-    });
+    return res.status(400).json({ mensaje: 'Email y contraseña son obligatorios' });
   }
 
   const sql = `
@@ -855,15 +597,11 @@ app.post('/api/cliente/login', (req, res) => {
   db.query(sql, [email], async (err, resultados) => {
 
     if (err) {
-      return res.status(500).json({
-        mensaje: 'Error interno del servidor'
-      });
+      return res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
 
     if (resultados.length === 0) {
-      return res.status(401).json({
-        mensaje: 'Credenciales incorrectas'
-      });
+      return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
     }
 
     const cliente = resultados[0];
@@ -876,9 +614,7 @@ app.post('/api/cliente/login', (req, res) => {
       );
 
       if (!passwordCorrecta) {
-        return res.status(401).json({
-          mensaje: 'Credenciales incorrectas'
-        });
+        return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
       }
 
       const token = jwt.sign(
@@ -908,25 +644,17 @@ app.post('/api/cliente/login', (req, res) => {
       });
 
     } catch (error) {
-
       return res.status(500).json({
         mensaje: 'Error interno del servidor',
         errorReal: error.message,
         stackReal: error.stack
       });
-
     }
-
   });
-
 });
 
 // conseguir datos del cliente logueado
-app.get(
-  '/api/cliente/me',
-  verificarToken,
-  requiereRol('cliente'),
-  (req, res) => {
+app.get( '/api/cliente/me', verificarToken, requiereRol('cliente'), (req, res) => {
 
     const sql = `
       SELECT clienteID, nombre, apellido, email,
@@ -939,15 +667,11 @@ app.get(
 
       if (error) {
         console.error('❌ Error obteniendo datos del cliente:', error);
-        return res.status(500).json({
-          mensaje: 'Error interno del servidor'
-        });
+        return res.status(500).json({ mensaje: 'Error interno del servidor' });
       }
 
       if (resultados.length === 0) {
-        return res.status(404).json({
-          mensaje: 'Cliente no encontrado'
-        });
+        return res.status(404).json({ mensaje: 'Cliente no encontrado' });
       }
 
       res.json(resultados[0]);
@@ -956,14 +680,9 @@ app.get(
 );
 
 // conseguir pedidos del cliente logueado
-app.get(
-  '/api/cliente/pedidos',
-  verificarToken,
-  requiereRol('cliente'),
-  async (req, res) => {
+app.get( '/api/cliente/pedidos', verificarToken, requiereRol('cliente'), async (req, res) => {
 
     try {
-
       const [pedidos] = await db.promise().query(
         `SELECT pedidoID, clienteID, fechaPedido, total
          FROM pedidos
@@ -983,22 +702,15 @@ app.get(
         errorReal: error.message,
         stackReal: error.stack
       });
-
     }
-
   }
 );
 
 // conseguir un pedido específico del cliente logueado
-app.get(
-  '/api/cliente/pedidos/:id',
-  verificarToken,
-  requiereRol('cliente'),
-  async (req, res) => {
+app.get( '/api/cliente/pedidos/:id', verificarToken, requiereRol('cliente'), async (req, res) => {
     try {
       const { id } = req.params;
 
-      // 1. Buscamos la cabecera del pedido
       const [pedidos] = await db.promise().query(
         `SELECT pedidoID, clienteID, fechaPedido, total
          FROM pedidos
@@ -1008,9 +720,7 @@ app.get(
       );
 
       if (pedidos.length === 0) {
-        return res.status(404).json({
-          mensaje: 'Pedido no encontrado'
-        });
+        return res.status(404).json({ mensaje: 'Pedido no encontrado' });
       }
 
       const pedidoGeneral = pedidos[0];
@@ -1033,14 +743,12 @@ app.get(
 
     } catch (error) {
       console.error('❌ Error obteniendo el pedido:', error);
-      res.status(500).json({
-        mensaje: 'Error interno del servidor'
-      });
+      res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
   }
 );
 
-// 1. OBTENER DATOS DEL PERFIL
+// OBTENER DATOS DEL PERFIL
 app.get('/api/cliente/perfil', verificarToken, requiereRol('cliente'), async (req, res) => {
   try {
     const [usuarios] = await db.promise().query(
@@ -1087,7 +795,6 @@ app.put('/api/cliente/seguridad', verificarToken, requiereRol('cliente'), async 
     const { passwordActual, nuevaPassword } = req.body;
     const clienteID = req.usuario.id;
 
-    // 1. Buscamos la contraseña actual encriptada en la base de datos
     const [clientes] = await db.promise().query(
       'SELECT password FROM clientes WHERE clienteID = ?',
       [clienteID]
@@ -1121,22 +828,15 @@ app.put('/api/cliente/seguridad', verificarToken, requiereRol('cliente'), async 
 });
 
 
-// =====================================================
 // ANGULAR
-// =====================================================
 const angularPath = path.join(__dirname, 'httpdocs');
-const angularIndex = path.join(
-  angularPath,
-  'index.html'
-);
+const angularIndex = path.join( angularPath, 'index.html' );
 
 console.log('📁 Angular:', angularPath);
 console.log('📄 Index:', angularIndex);
 
 // Archivos estáticos de Angular
-app.use(
-  express.static(angularPath)
-);
+app.use( express.static(angularPath) );
 
 app.use((req, res, next) => {
   // Las API no pasan por Angular
