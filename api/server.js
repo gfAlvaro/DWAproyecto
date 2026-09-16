@@ -13,7 +13,13 @@ const verificarToken = require('./middleware/auth');
 const requiereRol = require('./middleware/roles');
 const nodemailer = require('nodemailer');
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://alvarogfv1-2526.proyectosdwa.es:4200',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 app.use(express.json());
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -867,41 +873,54 @@ app.post('/api/cliente/pedidos/detalle', (req, res) => {
     });
 });
 
+
+const googleUser = String(process.env.MAIL_USER).replace(/['"]/g, '').trim();
+const googlePass = String(process.env.MAIL_PASS).replace(/['"]/g, '').trim();
+
 // Configuración del transportador de Nodemailer
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Forzamos SSL para el puerto 465
   auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS
+    user: googleUser, // Tu correo de Gmail corregido
+    pass: googlePass      // Tus 16 letras de Google (sin espacios)
+  },
+  tls: {
+    // Crucial en Plesk: evita bloqueos por certificados locales
+    rejectUnauthorized: false
   }
 });
 
-// Gestionar los datos del formulario de contacto
+// Ruta del formulario de contacto
 app.post('/api/contacto', (req, res) => {
-  const { nombre, email, mensaje } = req.body;
+  const { name, email, subject, message } = req.body;
 
-  // Validación básica
-  if (!nombre || !email || !mensaje) {
+  // Validación de los campos en inglés que vienen de tu Angular
+  if (!name || !email || !subject || !message) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios' });
   }
 
   const mailOptions = {
-    from: process.env.MAIL_USER,
-    to: process.env.MAIL_USER,
-    subject: `Nuevo mensaje de contacto de ${nombre}`,
-    text: `Has recibido un mensaje de: ${nombre} (${email})\n\nMensaje:\n${mensaje}`
+    from: process.env.MAIL_USER, // El mismo correo autenticado
+    to: process.env.MAIL_USER,   // Donde quieres recibir el mensaje
+    subject: `Contacto E-commerce: ${subject}`,
+    text: `Has recibido un mensaje de: ${name} (${email})\n\nMensaje:\n${message}`
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Error al enviar el correo' });
+      console.error('❌ Error en Nodemailer:', error.message);
+      return res.status(500).json({ 
+        error: 'Error al enviar el correo', 
+        detalle: { code: error.code, command: error.command, message: error.message }
+      });
     }
-    res.status(200).json({ mensaje: 'Correo enviado con éxito' });
+    return res.status(200).json({ mensaje: 'Correo enviado con éxito' });
   });
 });
 
-// ANGULAR
+// --- ANGULAR ---
 const angularPath = path.join(__dirname, 'httpdocs');
 const angularIndex = path.join( angularPath, 'index.html' );
 
@@ -926,6 +945,7 @@ app.use((req, res, next) => {
 
   fs.readFile(index, 'utf8', (err, html) => {
     if (err) {
+      console.error('❌ Error cargando Angular index.html:', err.message);
       return res.status(500).send('Error cargando Angular');
     }
 

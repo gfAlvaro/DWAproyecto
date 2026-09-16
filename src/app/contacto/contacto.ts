@@ -18,9 +18,10 @@ export class ContactForm {
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
     this.contactoForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      mensaje: ['', [Validators.required, Validators.minLength(10)]]
+      subject: ['', [Validators.required, Validators.minLength(3)]],
+      message: ['', [Validators.required, Validators.minLength(10)]]
     });
   }
 
@@ -31,7 +32,7 @@ export class ContactForm {
 
     this.enviando = true;
     this.mensajeEstado = '';
-    const urlApi = 'http://localhost:3000/api/contacto';
+    const urlApi = 'https://alvarogfv1-2526.proyectosdwa.es/api/contacto';
 
     this.http.post(urlApi, this.contactoForm.value).subscribe({
       next: (response: any) => {
