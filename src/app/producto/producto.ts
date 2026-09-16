@@ -1,8 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../core/services/api';
 import { SeoService } from '../core/services/seo.service';
+import { CartService } from '../core/services/cart.service';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
   selector: 'app-producto',
@@ -20,7 +22,10 @@ export class Producto implements OnInit {
     private route: ActivatedRoute,
     private seoService: SeoService,
     private api: ApiService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private cartService: CartService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -51,4 +56,17 @@ export class Producto implements OnInit {
       });
     });
   }
+
+  onAgregarAlCarrito() {
+    if (!this.authService.isLoggedIn()) { 
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
+    if (this.producto) {
+      this.cartService.agregarProducto(this.producto, 1);
+      this.router.navigate(['/mi-cuenta/carrito']); 
+    }
+  }
 }
+

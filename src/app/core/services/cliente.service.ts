@@ -70,4 +70,12 @@ export class ClienteService {
   cambiarPassword(datos: any): Observable<{ mensaje: string }> {
     return this.http.put<{ mensaje: string }>(`${this.apiUrl}/seguridad`, datos);
   }
+
+  crearPedidoMaestro(datos: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/pedidos/maestro`, datos);
+  }
+
+  crearPedidoDetalle(datos: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/pedidos/detalle`, datos);
+  }
 }

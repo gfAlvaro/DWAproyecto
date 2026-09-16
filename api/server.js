@@ -11,6 +11,8 @@ const cors = require('cors');
 const app = express();
 const verificarToken = require('./middleware/auth');
 const requiereRol = require('./middleware/roles');
+const nodemailer = require('nodemailer');
+
 app.use(cors());
 app.use(express.json());
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -827,6 +829,77 @@ app.put('/api/cliente/seguridad', verificarToken, requiereRol('cliente'), async 
   }
 });
 
+// Endpoint para insertar pedidos 1: Guarda únicamente el pedido general
+app.post('/api/cliente/pedidos/maestro', (req, res) => {
+    const { clienteID, total } = req.body;
+
+    if (!clienteID || !total) {
+        return res.status(400).json({ error: 'Faltan datos del cliente o total.' });
+    }
+
+    const query = 'INSERT INTO pedidos (clienteID, fechaPedido, total, estado) VALUES (?, NOW(), ?, ?)';
+    
+    db.query(query, [clienteID, total, 'Pendiente'], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error BD Maestro', detalle: err.message });
+        }
+        // Retorna el ID creado sin tocar los detalles aún
+        return res.status(201).json({ pedidoID: result.insertId });
+    });
+});
+
+// Endpoint para insertar pedidos 2: Guarda los artículos de uno en uno
+app.post('/api/cliente/pedidos/detalle', (req, res) => {
+    const { pedidoID, productoID, cantidad, precioUnitario } = req.body;
+
+    if (!pedidoID || !productoID || !cantidad || !precioUnitario) {
+        return res.status(400).json({ error: 'Datos de detalle incompletos.' });
+    }
+
+    const subtotal = cantidad * precioUnitario;
+    const query = 'INSERT INTO detallesPedido (pedidoID, productoID, cantidad, precioUnitario, subtotal) VALUES (?, ?, ?, ?, ?)';
+
+    db.query(query, [pedidoID, productoID, cantidad, precioUnitario, subtotal], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error BD Detalle', detalle: err.message });
+        }
+        return res.status(201).json({ success: true });
+    });
+});
+
+// Configuración del transportador de Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS
+  }
+});
+
+// Gestionar los datos del formulario de contacto
+app.post('/api/contacto', (req, res) => {
+  const { nombre, email, mensaje } = req.body;
+
+  // Validación básica
+  if (!nombre || !email || !mensaje) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  }
+
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to: process.env.MAIL_USER,
+    subject: `Nuevo mensaje de contacto de ${nombre}`,
+    text: `Has recibido un mensaje de: ${nombre} (${email})\n\nMensaje:\n${mensaje}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Error al enviar el correo' });
+    }
+    res.status(200).json({ mensaje: 'Correo enviado con éxito' });
+  });
+});
 
 // ANGULAR
 const angularPath = path.join(__dirname, 'httpdocs');

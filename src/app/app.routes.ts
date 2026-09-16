@@ -3,7 +3,7 @@ import { Inicio } from './inicio/inicio';
 import { Login } from './client/login/login';
 import { SobreNosotros } from './sobre-nosotros/sobre-nosotros';
 import { Productos } from './productos/productos';
-import { Contacto } from './contacto/contacto';
+import { ContactForm } from './contacto/contacto';
 import { Producto } from './producto/producto';
 import { adminGuard } from './guards/admin.guard';
 import { clienteGuard } from './guards/client.guard';
@@ -23,7 +23,7 @@ export const routes: Routes = [
       { path: 'sobre-nosotros', component: SobreNosotros, data: { title: 'Sobre Nosotros | Fractals', description: 'Conoce más sobre nosotros.' }  },
       { path: 'productos', component: Productos, data: { title: 'Nuestros Productos | Fractals', description: 'Explora nuestra selección de productos.' }  },
       { path: 'productos/:slug', component: Producto },
-      { path: 'contacto', component: Contacto, data: { title: 'Contacto | Fractals', description: 'Contáctanos para más información.' } }
+      { path: 'contacto', component: ContactForm, data: { title: 'Contacto | Fractals', description: 'Contáctanos para más información.' } }
     ]
   },
 
@@ -38,6 +38,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./client/dashboard/dashboard')
             .then(m => m.Dashboard)
+      },
+      {
+        path: 'carrito',
+        loadComponent: () =>
+          import('./client/carrito/carrito')
+            .then(m => m.Carrito)
       },
       {
         path: 'pedidos',

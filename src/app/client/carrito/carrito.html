@@ -1,0 +1,66 @@
+<!-- src/app/pages/carrito/carrito.component.html -->
+<div class="carrito-container">
+  <h1>Tu Carrito de Compra</h1>
+  @if (cartService.items().length === 0) {
+    <div class="carrito-vacio">
+      <p>No tienes productos en tu carrito de compra.</p>
+      <button routerLink="/" class="btn-volver">Ir a la tienda</button>
+    </div>
+  }   
+  @else {
+    <div class="carrito-layout">      
+      <div class="carrito-articulos">
+        <div class="tabla-header">
+          <span>Producto</span>
+          <span>Precio</span>
+          <span>Cantidad</span>
+          <span>Subtotal</span>
+          <span>Acciones</span>
+        </div>
+        @for (item of cartService.items(); track item.productoID) {
+          <div class="carrito-item">
+            <div class="item-info">
+              <a [routerLink]="['/producto', item.slug]" class="item-nombre">
+                {{ item.nombreProducto }}
+              </a>
+            </div>
+            <div class="item-precio">
+              {{ item.precio | currency:'EUR':'symbol':'1.2-2' }}
+            </div>
+            <div class="item-cantidad">
+              <button (click)="disminuirCantidad(item)" class="btn-cant">-</button>
+              <span class="cant-numero">{{ item.cantidad }}</span>
+              <button (click)="aumentarCantidad(item)" class="btn-cant">+</button>
+            </div>
+            <div class="item-subtotal">
+              {{ (item.precio * item.cantidad) | currency:'EUR':'symbol':'1.2-2' }}
+            </div>
+            <div class="item-acciones">
+              <button (click)="eliminarItem(item.productoID)" class="btn-eliminar" title="Eliminar artículo">
+                🗑️
+              </button>
+            </div>
+          </div>
+        }
+        <button (click)="limpiarCarrito()" class="btn-vaciar">
+          Vaciar Carrito
+        </button>
+      </div>
+      <div class="carrito-resumen">
+        <h3>Resumen del pedido</h3>
+        <div class="resumen-linea">
+          <span>Productos totales:</span>
+          <span>{{ cartService.totalProductos() }}</span>
+        </div>
+        <div class="resumen-linea total">
+          <span>Total a pagar:</span>
+          <span class="total-precio">{{ cartService.precioTotal() | currency:'EUR':'symbol':'1.2-2' }}</span>
+        </div>
+        <button (click)="procederAlPago()" class="btn-checkout">
+          Tramitar Pedido
+        </button>
+        <a routerLink="/" class="seguir-comprando">← Seguir comprando</a>
+      </div>
+    </div>
+  }
+</div>

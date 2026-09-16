@@ -1,53 +1,48 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from '../app.routes';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideRouter(routes),
-    provideHttpClient()
-  ]
-};
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-contact',
-  imports: [ReactiveFormsModule],
+  selector: 'app-contacto',
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './contacto.html',
-  styleUrls: ['./contacto.scss']
+  styleUrl: './contacto.scss' 
 })
 
-export class Contacto {
+export class ContactForm {
+  contactoForm: FormGroup;
+  enviando = false;
+  mensajeEstado = '';
 
-  contactForm: FormGroup;
-
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpClient
-  ) {
-    this.contactForm = this.fb.group({
-      name: ['', Validators.required],
+  constructor(private fb: FormBuilder, private http: HttpClient) {
+    this.contactoForm = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      subject: ['', Validators.required],
-      message: ['', [Validators.required, Validators.minLength(10)]]
+      mensaje: ['', [Validators.required, Validators.minLength(10)]]
     });
   }
 
-  send() {
-    if (this.contactForm.invalid) {
-      this.contactForm.markAllAsTouched();
+  onSubmit() {
+    if (this.contactoForm.invalid) {
       return;
     }
 
-    this.http.post('https://tu-api.com/contacto', this.contactForm.value).subscribe({
-      next: () => {
-        alert('Mensaje enviado');
-        this.contactForm.reset();
+    this.enviando = true;
+    this.mensajeEstado = '';
+    const urlApi = 'http://localhost:3000/api/contacto';
+
+    this.http.post(urlApi, this.contactoForm.value).subscribe({
+      next: (response: any) => {
+        this.enviando = false;
+        this.mensajeEstado = '¡Mensaje enviado con éxito!';
+        this.contactoForm.reset();
       },
-      error: () => {
-        alert('Ha ocurrido un error');
+      error: (error) => {
+        this.enviando = false;
+        this.mensajeEstado = 'Hubo un error al enviar el mensaje. Inténtalo de nuevo.';
+        console.error(error);
       }
     });
   }

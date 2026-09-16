@@ -9,6 +9,10 @@
         </ul>
     </nav>
     @if (estaAutenticado) {
+      <a [routerLink]="['/mi-cuenta/carrito']">
+        🛒 <span class="badge">{{ cartService.totalProductos() }}</span>
+        <span class="total-precio">({{ cartService.precioTotal() | currency:'EUR':'symbol':'1.2-2' }})</span>
+      </a>
       <a routerLink="/mi-cuenta">Mi Cuenta</a>
     } @else {
       <a routerLink="/login">Iniciar Sesión</a>

@@ -1,13 +1,13 @@
 <h1>Contacta con nosotros</h1>
-<form class="contactForm" [formGroup]="contactForm" (ngSubmit)="send()">
+<form class="contactForm" [formGroup]="contactoForm" (ngSubmit)="onSubmit()">
   <input type="text" formControlName="name" placeholder="Nombre">
-  @if (contactForm.get('name')?.invalid && contactForm.get('name')?.touched) {
+  @if (contactoForm.get('name')?.invalid && contactoForm.get('name')?.touched) {
     <div style="color:red">
       El nombre es obligatorio.
     </div>
   }
   <input type="email" formControlName="email" placeholder="Email">
-  @if (contactForm.get('email')?.invalid && contactForm.get('email')?.touched) {
+  @if (contactoForm.get('email')?.invalid && contactoForm.get('email')?.touched) {
     <div style="color:red">
       Introduce un email válido.
     </div>
