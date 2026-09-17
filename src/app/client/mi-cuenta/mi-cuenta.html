@@ -13,15 +13,12 @@
   </aside>
   <main class="contenido">
     <header class="topbar">
-      <div>
-        Mi cuenta
-      </div>
       <a routerLink="/">Volver a la tienda</a>
-      <div class="usuario">
+      <p>Hola, <span class="usuario">
         @if (cliente) {
           {{ cliente.nombre }} {{ cliente.apellido }}
         }
-      </div>
+      </span></p>
     </header>
     <section class="pagina">
       <router-outlet></router-outlet>

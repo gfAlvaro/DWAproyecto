@@ -776,10 +776,10 @@ app.get( '/api/cliente/pedidos/:id', verificarToken, requiereRol('cliente'), asy
       const pedidoGeneral = pedidos[0];
 
       const [articulos] = await db.promise().query(
-        `SELECT dp.cantidad, dp.precioUnitario, dp.subtotal, p.nombre AS nombreProducto
-         FROM detalles_pedidos dp
-         INNER JOIN productos p ON dp.productoID = p.id
-         WHERE dp.pedidoID = ?`,
+        `SELECT dp.cantidad, dp.precioUnitario, dp.subtotal, p.nombreProducto AS nombreProducto
+        FROM detallesPedido dp
+        INNER JOIN productos p ON dp.productoID = p.productoID
+        WHERE dp.pedidoID = ?`,
         [id]
       );
 
@@ -793,7 +793,9 @@ app.get( '/api/cliente/pedidos/:id', verificarToken, requiereRol('cliente'), asy
 
     } catch (error) {
       console.error('❌ Error obteniendo el pedido:', error);
-      res.status(500).json({ mensaje: 'Error interno del servidor' });
+      res.status(500).json({ mensaje: 'Error interno del servidor',
+        errorReal: error.message,
+        stackReal: error.stack });
     }
   }
 );
