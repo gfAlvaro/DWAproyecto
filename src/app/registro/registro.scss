@@ -1,0 +1,28 @@
+@use '../../variables.scss' as *;
+
+.registro-container {
+    text-align: center;
+      height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; // Centra horizontalmente
+  align-items: center;     // Centra verticalmente
+}
+
+
+input {
+    margin-bottom: 10px;
+}
+
+button {
+    color: $colorSecundario;
+    background-color: $colorPrimario;
+    border: 1px solid $colorSecundario;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    padding: 1.5em;
+    border-radius: 1em;
+    margin-left: auto;   
+    margin-right: $margenExterior;
+}

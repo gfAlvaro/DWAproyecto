@@ -140,4 +140,8 @@ export class AuthService {
   isLoggedIn(): boolean {
     return localStorage.getItem('cliente_token') !== null;
   }
+
+  registrar(cliente: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/registro`, cliente); 
+  }
 }

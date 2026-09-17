@@ -10,6 +10,7 @@ import { clienteGuard } from './guards/client.guard';
 import { PublicLayout } from './public-layout/public-layout';
 import { AdminLayout } from './admin/admin-layout/admin-layout';
 import { MiCuenta } from './client/mi-cuenta/mi-cuenta';
+import { Registro } from './registro/registro';
 
 export const routes: Routes = [
 
@@ -23,7 +24,9 @@ export const routes: Routes = [
       { path: 'sobre-nosotros', component: SobreNosotros, data: { title: 'Sobre Nosotros | Fractals', description: 'Conoce más sobre nosotros.' }  },
       { path: 'productos', component: Productos, data: { title: 'Nuestros Productos | Fractals', description: 'Explora nuestra selección de productos.' }  },
       { path: 'productos/:slug', component: Producto },
-      { path: 'contacto', component: ContactForm, data: { title: 'Contacto | Fractals', description: 'Contáctanos para más información.' } }
+      { path: 'contacto', component: ContactForm, data: { title: 'Contacto | Fractals', description: 'Contáctanos para más información.' } },
+      { path: 'registro', component: Registro, data: { title: 'Registro | Fractals', description: 'Regístrate en nuestra web.' } }
+
     ]
   },
 

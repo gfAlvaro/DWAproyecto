@@ -821,7 +821,7 @@ app.get('/api/cliente/perfil', verificarToken, requiereRol('cliente'), async (re
   }
 });
 
-// ACTUALIZAR DATOS DEL PERFIL
+// Actualizar datos del perfil
 app.put('/api/cliente/perfil', verificarToken, requiereRol('cliente'), async (req, res) => {
   try {
     const { nombre, apellido, email, telefono, direccion } = req.body;
@@ -841,7 +841,7 @@ app.put('/api/cliente/perfil', verificarToken, requiereRol('cliente'), async (re
   }
 });
 
-// CAMBIAR CONTRASEÑA DEL PERFIL
+// Cambiar contraseña de perfil
 app.put('/api/cliente/seguridad', verificarToken, requiereRol('cliente'), async (req, res) => {
   try {
     const { passwordActual, nuevaPassword } = req.body;
@@ -962,6 +962,37 @@ app.post('/api/contacto', (req, res) => {
     }
     return res.status(200).json({ mensaje: 'Correo enviado con éxito' });
   });
+});
+
+// registrarse en la web
+app.post('/api/registro', async (req, res) => {
+
+  const { nombre, apellido, email, password, telefono, direccion } = req.body;
+
+  if (!nombre || !apellido || !email || !password) {
+      return res.status(400).json({ error: 'Nombre, apellido, email y contraseña son obligatorios.' });
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const query = `
+      INSERT INTO clientes (nombre, apellido, email, password, telefono, direccion) 
+      VALUES (?, ?, ?, ?, ?, ?)`;
+        
+    db.query(query, [nombre, apellido, email, hashedPassword, telefono || null, direccion || null], (err, result) => {
+      if (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+          return res.status(400).json({ error: 'El correo electrónico ya está registrado.' });
+        }
+        return res.status(500).json({ error: 'Error al guardar el cliente en la base de datos.' });
+      }
+      res.status(201).json({ mensaje: 'Cliente registrado con éxito.' });
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor.' });
+  }
 });
 
 

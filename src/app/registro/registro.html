@@ -1,0 +1,36 @@
+<div class="registro-container">
+  <h2>Registro de Clientes</h2>
+  <form [formGroup]="formRegistro" (ngSubmit)="enviar()">
+    <div>
+      <label>Nombre: * </label>
+      <input type="text" formControlName="nombre">
+      <span *ngIf="formRegistro.get('nombre')?.touched && formRegistro.get('nombre')?.invalid" style="color:red;">El nombre es requerido.</span>
+    </div>
+    <div>
+      <label>Apellidos: * </label>
+      <input type="text" formControlName="apellido">
+      <span *ngIf="formRegistro.get('apellido')?.touched && formRegistro.get('apellido')?.invalid" style="color:red;">El apellido es requerido.</span>
+    </div>
+    <div>
+      <label>Correo Electrónico: * </label>
+      <input type="email" formControlName="email">
+      <span *ngIf="formRegistro.get('email')?.touched && formRegistro.get('email')?.invalid" style="color:red;">Introduce un email válido.</span>
+    </div>
+    <div>
+      <label>Contraseña: * </label>
+      <input type="password" formControlName="password">
+      <span *ngIf="formRegistro.get('password')?.touched && formRegistro.get('password')?.invalid" style="color:red;">Mínimo 6 caracteres.</span>
+    </div>
+    <div>
+      <label>Teléfono (Opcional): </label>
+      <input type="text" formControlName="telefono">
+    </div>
+    <div>
+      <label>Dirección de Envío (Opcional): </label>
+      <input type="text" formControlName="direccion">
+    </div>
+    <button type="submit" [disabled]="formRegistro.invalid">Crear Cuenta</button>
+  </form>
+  <p *ngIf="mensajeExito" style="color: green;">{{ mensajeExito }}</p>
+  <p *ngIf="mensajeError" style="color: red;">{{ mensajeError }}</p>
+</div>
