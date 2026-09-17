@@ -1,59 +1,41 @@
-# ProyectoDWA
+# Tienda web con Angular, un proyecto para el máster de Desarrollo Web Avanzado
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+Este proyecto desarrolla una tienda web de acuerdo a las especificaciones de los proyectos del máster en Desarrollo Web Avanzado.
 
-## Development server
+## Parte pública
 
-To start a local development server, run:
+En la parte pública hay una landing de inicio con descripciones sobre la tienda y botones CTA.
 
-```bash
-ng serve
-```
+El header de la tienda cuenta con un nav donde poder acceder a las distintas secciones públicas de la tienda.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Inicio
 
-## Code scaffolding
+Esta opción del nav devuelve a la página de inicio de la web
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Sobre nosotros
 
-```bash
-ng generate component component-name
-```
+Información sobre las personas responsables de la tienda y su trayectoria
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### productos
 
-```bash
-ng generate --help
-```
+Selección de productos disponibles en la tienda. Si se hace click en alguno de ellos aparecera la página individual del mismo
 
-## Building
+### contacto
 
-To build the project run:
+Formulario de contacto para que el cliente pueda comunicarse con los responsables de la tienda
 
-```bash
-ng build
-```
+### botón para iniciar sesión
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Lleva a un formulario para iniciar sesión, una vez hecho los usuarios podrán comprar los productos y ver su carrito de la compra en el header. El botón de iniciar sesión será entonces sustituido por el botón Mi cuenta que permite a los usuarios entrar en su panel privado.
 
-## Running unit tests
+## Panel privado de usuarios
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Aquí los usuarios pueden consultar y modificar sus datos de perfil, ver su lista de pedidos y modificar su contraseña.
 
-```bash
-ng test
-```
+## Panel privado para administradores
 
-## Running end-to-end tests
+La web cuenta con un acceso exclusivo para administradores donde podrán llevar a cabo las tareas propias de su rol. Esto es añadir, modificar y/o borrar los productos existentes en la web, consultar los pedidos y modificar su estado y ver los datos de los clientes
 
-For end-to-end (e2e) testing, run:
+## Tecnologías aplicadas en la web
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+La web está desarrollada en Angular, y usa una API en Node.js que envía consultas a una base de datos en MySQL, alojada en el servidor proporcionado para el proyecto.
