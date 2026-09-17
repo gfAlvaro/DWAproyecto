@@ -525,7 +525,7 @@ app.get( '/api/admin/productos/:id', verificarToken, requiereRol('administrador'
   }
 );
 
-// OBTENER TODOS LOS CLIENTES
+// Obtener lista de clientes
 app.get( '/api/admin/clientes', verificarToken, requiereRol('administrador'), (req, res) => {
 
     const sql = `
@@ -553,30 +553,72 @@ app.get( '/api/admin/clientes', verificarToken, requiereRol('administrador'), (r
   }
 );
 
-// OBTENER TODOS LOS PEDIDOS
+// Obtener todos los pedidos
 app.get( '/api/admin/pedidos', verificarToken, requiereRol('administrador'), (req, res) => {
 
-    const sql = `
-      SELECT
-        pedidoID,
-        clienteID,
-        fechaPedido,
-        total
-      FROM pedidos
-      ORDER BY pedidoID DESC
-    `;
+    const sql = `SELECT 
+      p.pedidoID, 
+      p.clienteID, 
+      -- Concatenamos nombre y apellidos con un espacio en medio
+      CONCAT(c.nombre, ' ', c.apellido) AS nombre_cliente, 
+      p.fechaPedido, 
+      p.total, 
+      p.estado 
+    FROM pedidos p
+    LEFT JOIN clientes c ON p.clienteID = c.clienteID
+    ORDER BY p.fechaPedido DESC`;
 
     db.query(sql, (err, results) => {
-
       if (err) {
         console.error( '❌ Error obteniendo pedidos:', err.message );
-        return res.status(500).json({ mensaje: 'Error en la base de datos' });
+        return res.status(500).json({ mensaje: 'Error en la base de datos', error: err.message });
       }
 
       res.json(results);
     });
   }
 );
+
+// Cambiar el estado de un pedido
+app.put('/api/admin/pedidos/:id/estado', verificarToken, requiereRol('administrador'), (req, res) => {
+  const { id } = req.params;
+  const { nuevoEstado } = req.body;
+
+  const query = 'UPDATE pedidos SET estado = ? WHERE pedidoID = ?';
+  db.query(query, [nuevoEstado, id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Estado actualizado', pedidoID: id, estado: nuevoEstado });
+  });
+});
+
+// obtener detalles de un pedido
+app.get('/api/admin/pedidos/:id/detalles', verificarToken, requiereRol('administrador'), (req, res) => {
+  const { id } = req.params; // Corresponde al pedidoID
+  
+  const query = `
+    SELECT 
+      dp.detalleID, 
+      dp.productoID, 
+      p.nombreProducto, 
+      p.pathImagen,
+      dp.cantidad, 
+      dp.precioUnitario, 
+      dp.subtotal 
+    FROM detallesPedido dp
+    LEFT JOIN productos p ON dp.productoID = p.productoID
+    WHERE dp.pedidoID = ?
+  `;
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error SQL en detalles:', err);
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
+
 
 // login de clientes
 app.post('/api/cliente/login', (req, res) => {
@@ -919,6 +961,7 @@ app.post('/api/contacto', (req, res) => {
     return res.status(200).json({ mensaje: 'Correo enviado con éxito' });
   });
 });
+
 
 // --- ANGULAR ---
 const angularPath = path.join(__dirname, 'httpdocs');

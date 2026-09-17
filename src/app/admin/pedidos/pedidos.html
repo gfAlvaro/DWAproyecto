@@ -2,27 +2,86 @@
 <table>
   <thead>
     <tr>
-      <th>ID</th>
-      <th>ID cliente</th>
-      <th>fecha pedido</th>
-      <th>total</th>
-      <th>estado</th>
-      <th>acciones</th>
+      <th>ID pedido</th>
+      <th>Cliente</th>
+      <th>Total</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
-  @for (pedido of (pedidos$ | async ); track pedido.pedidoID) {
-      <tr>
-        <td>{{ pedido['pedidoID'] }}</td>
-        <td>{{ pedido['clienteID'] }}</td>
-        <td>{{ pedido['fechaPedido'] }}</td>
-        <td>{{ pedido['total'] }}</td>
-        <td>{{ pedido['estado'] }}</td>
-        <td>
-          <button class="pedidos-botones">Editar</button>
-          <button class="pedidos-botones">Borrar</button>
-        </td>
-      </tr>
+    @for (pedido of (pedidos$ | async); track pedido.pedidoID) {
+      <ng-container>
+        
+        <!-- Fila del Pedido -->
+        <tr>
+          <td>#{{ pedido.pedidoID }}</td>
+          <td>{{ pedido.nombre_cliente }}</td>
+          <td>{{ pedido.total | currency: 'EUR' }}</td>
+          <td>{{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <span class="badge" [ngClass]="pedido.estado.toLowerCase()">
+              {{ pedido.estado }}
+            </span>
+          </td>
+          <td>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select [value]="pedido.estado" (change)="onEstadoChange(pedido.pedidoID, $event)">
+                <option *ngFor="let estado of estadosDisponibles" [value]="estado">
+                  {{ estado }}
+                </option>
+              </select>
+              
+              <button class="pedidos-botones" (click)="toggleDetalles(pedido.pedidoID)">
+                {{ pedidoExpandidoID === pedido.pedidoID ? 'Ocultar' : 'Ver detalles' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Fila de Detalles Desplegables -->
+        @if (pedidoExpandidoID === pedido.pedidoID) {
+          <tr>
+            <td colspan="6">
+              <div style="padding: 15px; background: #f9f9f9; border-left: 4px solid #007bff; margin: 10px 0;">
+                <h3 style="margin-top: 0;">Productos del Pedido #{{ pedido.pedidoID }}</h3>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                  <thead>
+                    <tr style="background: #eee;">
+                      <th style="padding: 8px; text-align: left;">Imagen</th>
+                      <th style="padding: 8px; text-align: left;">Producto</th>
+                      <th style="padding: 8px; text-align: center;">Cantidad</th>
+                      <th style="padding: 8px; text-align: right;">Precio Unitario</th>
+                      <th style="padding: 8px; text-align: right;">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of detallesCargados; track item.detalleID) {
+                      <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 8px;">
+                          <img 
+                            *ngIf="item.pathImagen" 
+                            [src]="obtenerRutaImagen(item.pathImagen)" 
+                            alt="{{ item.nombreProducto }}" 
+                            style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;"
+                          >
+                        </td>
+                        <td style="padding: 8px;">{{ item.nombreProducto || 'Producto #' + item.productoID }}</td>
+                        <td style="padding: 8px; text-align: center;">{{ item.cantidad }}</td>
+                        <td style="padding: 8px; text-align: right;">{{ item.precioUnitario | currency:'EUR' }}</td>
+                        <td style="padding: 8px; text-align: right;">{{ item.subtotal | currency:'EUR' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+        }
+
+      </ng-container>
     }
   </tbody>
 </table>

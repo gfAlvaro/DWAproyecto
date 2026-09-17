@@ -15,4 +15,13 @@ export class AdminPedidosService {
   obtenerPedidos(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
+
+  cambiarEstado(pedidoID: number, nuevoEstado: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${pedidoID}/estado`, { nuevoEstado });
+  }
+
+  getDetallesPedido(pedidoID: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${pedidoID}/detalles`);
+  }
+
 }

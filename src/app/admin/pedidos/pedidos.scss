@@ -10,3 +10,12 @@
   font-size: 15px !important;
   margin: 5px;
 }
+
+
+table th, table td {
+    padding: 20px;
+}
+
+table thead tr {
+    border: 1px solid $colorPrimario !important;
+}
