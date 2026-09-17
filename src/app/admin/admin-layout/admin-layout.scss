@@ -1,13 +1,15 @@
+@use '../../../variables.scss' as *;
+
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: #f5f5f5;
+  background: $colorSecundario;
 }
 
 .sidebar {
   width: 240px;
-  background: #1f2937;
-  color: white;
+  background: $colorPrimario;
+  color: $colorSecundario;
   padding: 20px;
 }
 
@@ -22,7 +24,7 @@
 }
 
 .sidebar a {
-  color: white;
+  color: $colorSecundario;
   text-decoration: none;
   padding: 10px;
   border-radius: 6px;
@@ -37,7 +39,7 @@
 }
 
 .admin-header {
-  background: white;
+  background: $colorSecundario;
   padding: 20px;
   border-bottom: 1px solid #ddd;
 }

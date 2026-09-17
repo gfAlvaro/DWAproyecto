@@ -1,0 +1,9 @@
+@use '../../../variables.scss' as *;
+
+table th, table td {
+    padding: 20px;
+}
+
+table thead tr {
+    border: 1px solid $colorPrimario !important;
+}

@@ -1,12 +1,7 @@
-<h1>Panel de administración</h1>
-<p>
+<h2>
   Bienvenido, 
   {{ authService.getAdministrador()?.nombre }}
-</p>
-<p>
-  Rol: 
-  {{ authService.getAdministrador()?.rol }}
-</p>
+</h2>
 <button (click)="logout()">
   Cerrar sesión
 </button>

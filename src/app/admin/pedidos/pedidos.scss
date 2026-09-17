@@ -1,0 +1,12 @@
+@use '../../../variables.scss' as *;
+
+.pedidos-botones {
+  color: $colorSecundario;
+  background-color: $colorPrimario;
+  border: 1px solid $colorPrimario;
+  border-radius: 6px;
+  padding: 11px 18px !important;
+  font-family: $fuentePrimaria;
+  font-size: 15px !important;
+  margin: 5px;
+}

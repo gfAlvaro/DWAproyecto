@@ -18,8 +18,8 @@
         <td>{{ producto['nombreProducto'] }}</td>
         <td>{{ producto['precio'] }}</td>
         <td>{{ producto['stock'] }}</td>
-        <td><a [routerLink]="['/admin/editar-producto', producto['productoID']]">Editar</a> 
-            <button type="button" class="btn-eliminar" (click)="abrirModalEliminar(producto)">Eliminar</button></td>
+        <td><a [routerLink]="['/admin/editar-producto', producto['productoID']]" class="productos-botones">Editar</a> 
+            <button type="button" class="btn-eliminar productos-botones" (click)="abrirModalEliminar(producto)">Eliminar</button></td>
       </tr>
     }
   </tbody>
