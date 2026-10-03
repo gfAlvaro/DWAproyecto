@@ -30,7 +30,6 @@ export class App implements OnInit {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       const urlActual = event.urlAfterRedirects;
-
       const esZonaPrivada = urlActual.includes('/admin') || urlActual.includes('/client');
 
       if (esZonaPrivada) {
