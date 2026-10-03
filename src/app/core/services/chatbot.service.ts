@@ -10,7 +10,7 @@ export class ChatbotService {
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
   mostrar(): void {
-    // 1. Si no se ha inyectado el script, lo fabricamos e insertamos el código interno
+    // Si no se ha inyectado el script, se fabrica e inserta el código interno
     if (!this.scriptInyectado) {
       const script = this.document.createElement('script');
       script.type = 'text/javascript';
@@ -28,13 +28,12 @@ export class ChatbotService {
             })(document,'script','livebeep-script');
       `; 
 
-      // Se inyecta en el <head> tal como te solicitó la plataforma
       this.document.head.appendChild(script);
       this.scriptInyectado = true;
       return;
     }
 
-    // 2. Si ya existía pero el usuario regresó a la zona pública, lo volvemos a mostrar
+    // Si ya existía pero el usuario regresó a la zona pública, se vuelve a mostrar
     this.alternarVisibilidadWidget(true);
   }
 
@@ -44,7 +43,7 @@ export class ChatbotService {
   }
 
   private alternarVisibilidadWidget(visible: boolean): void {
-    // Selectores habituales que renderiza Beepy en el árbol HTML de tu navegador
+    // Selectores habituales que renderiza Beepy en el árbol HTML
     const widget = this.document.getElementById('beepy-chatbot-root') || 
                    this.document.querySelector('.beepy-chatbot-container') ||
                    this.document.getElementById('eye-chatbot');
