@@ -67,7 +67,11 @@
   background: #b91c1c;
 }
 
-header a {
+.topbar {
+  border-bottom: 1px solid #ddd;
+}
+
+.topbar a {
   color: $colorSecundario;
   background-color: $colorPrimario;
   border: 1px solid $colorPrimario;

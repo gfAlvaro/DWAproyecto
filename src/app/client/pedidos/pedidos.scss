@@ -1,0 +1,32 @@
+@use '../../../variables.scss' as *;
+
+h2 {
+    text-align: center;
+}
+
+.pedidos .pedidos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    align-items: center;
+}
+
+.pedidos .pedidos-table th, .pedidos .pedidos-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.pedidos .pedidos-table th {
+    background-color: $colorPrimario;
+    color: $colorSecundario;
+}
+
+.pedidos button {
+    padding: 1.5em;
+    margin-bottom: 1.5em;
+    border-radius: 1em;
+    color: white;
+    background-color: black;
+    border: 1px solid black;
+}

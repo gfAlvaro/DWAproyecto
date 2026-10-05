@@ -1,12 +1,11 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { ClienteService } from '../../core/services/cliente.service';
 
 @Component({
   selector: 'app-seguridad',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './seguridad.html',
   styleUrl: './seguridad.scss'
 })

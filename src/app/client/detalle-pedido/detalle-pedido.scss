@@ -1,0 +1,33 @@
+@use '../../../variables.scss' as *;
+
+h2 {
+    text-align: center;
+}
+
+.detalle-pedido .productos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    align-items: center;
+}
+
+.detalle-pedido .productos-table th, .detalle-pedido .productos-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.detalle-pedido .productos-table th {
+    background-color: $colorPrimario;
+    color: $colorSecundario;
+}
+
+.detalle-pedido .btn-back {
+    padding: 0.5em;
+    margin-bottom: 1.5em;
+    margin-left: 1em;
+    border-radius: 1em;
+    color: $colorSecundario;
+    background-color: $colorPrimario;
+    border: 1px solid $colorPrimario;
+}

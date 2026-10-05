@@ -1,21 +1,18 @@
-<div class="password-container">
-  <div class="page-header">
-    <h2>Cambiar Contraseña</h2>
-    <a routerLink="/mi-cuenta" class="btn-back">Volver al Dashboard</a>
-  </div>
+<div class="seguridad">
+  <h2>Cambiar Contraseña</h2>
   @if (mensajeExito) { <div class="alert-success">{{ mensajeExito }}</div> }
   @if (error) { <div class="alert-danger">{{ error }}</div> }
   <form [formGroup]="passwordForm" (ngSubmit)="guardarPassword()" class="password-form">
-    <div class="form-group">
+    <div class="campo">
       <label>Contraseña Actual: </label>
       <input type="password" formControlName="passwordActual" />
     </div>
-    <div class="form-group">
-      <label>Nueva Contraseña (mínimo 6 caracteres): </label>
+    <div class="campo">
+      <label>Nueva Contraseña<br>(mín. 6 caracteres): </label>
       <input type="password" formControlName="nuevaPassword" />
     </div>
-    <div class="form-group">
-      <label>Confirmar Nueva Contraseña: </label>
+    <div class="campo">
+      <label>Confirmar<br>Nueva Contraseña: </label>
       <input type="password" formControlName="confirmarPassword" />
       @if (passwordForm.errors?.['noCoinciden'] && passwordForm.get('confirmarPassword')?.touched) {
         <span class="error-text">Las nuevas contraseñas no coinciden.</span>
