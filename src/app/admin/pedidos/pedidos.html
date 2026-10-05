@@ -1,5 +1,6 @@
+<div class="pedidos-container">
 <h2>Pedidos</h2>
-<table>
+<table class="pedidos-table">
   <thead>
     <tr>
       <th>ID pedido</th>
@@ -13,7 +14,6 @@
   <tbody>
     @for (pedido of (pedidos$ | async); track pedido.pedidoID) {
       <ng-container>
-        
         <!-- Fila del Pedido -->
         <tr>
           <td>#{{ pedido.pedidoID }}</td>
@@ -32,21 +32,18 @@
                   {{ estado }}
                 </option>
               </select>
-              
               <button class="pedidos-botones" (click)="toggleDetalles(pedido.pedidoID)">
                 {{ pedidoExpandidoID === pedido.pedidoID ? 'Ocultar' : 'Ver detalles' }}
               </button>
             </div>
           </td>
         </tr>
-
         <!-- Fila de Detalles Desplegables -->
         @if (pedidoExpandidoID === pedido.pedidoID) {
           <tr>
             <td colspan="6">
               <div style="padding: 15px; background: #f9f9f9; border-left: 4px solid #007bff; margin: 10px 0;">
-                <h3 style="margin-top: 0;">Productos del Pedido #{{ pedido.pedidoID }}</h3>
-                
+                <h3 style="margin-top: 0;">Productos del Pedido #{{ pedido.pedidoID }}</h3>   
                 <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                   <thead>
                     <tr style="background: #eee;">
@@ -80,8 +77,8 @@
             </td>
           </tr>
         }
-
       </ng-container>
     }
   </tbody>
 </table>
+</div>

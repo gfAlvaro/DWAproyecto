@@ -19,3 +19,26 @@ table th, table td {
 table thead tr {
     border: 1px solid $colorPrimario !important;
 }
+
+
+.pedidos-container h2 {
+    text-align: center;
+}
+
+.pedidos-container .pedidos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    align-items: center;
+}
+
+.pedidos-container .pedidos-table th, .pedidos-container .pedidos-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.pedidos-container .pedidos-table th{
+    background-color: $colorPrimario !important;
+    color: $colorSecundario !important;
+}

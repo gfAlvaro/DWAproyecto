@@ -1,9 +1,23 @@
 @use '../../../variables.scss' as *;
 
-table th, table td {
-    padding: 20px;
+.clientes-container h2 {
+    text-align: center;
 }
 
-table thead tr {
-    border: 1px solid $colorPrimario !important;
+.clientes-container .clientes-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    align-items: center;
+}
+
+.clientes-container .clientes-table th, .clientes-container .clientes-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.clientes-container .clientes-table th{
+    background-color: $colorPrimario !important;
+    color: $colorSecundario !important;
 }

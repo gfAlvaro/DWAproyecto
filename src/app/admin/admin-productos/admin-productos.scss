@@ -95,3 +95,26 @@ th, td {
 table thead tr {
     border: 1px solid $colorPrimario !important;
 }
+
+.admin-productos-container h2 {
+    text-align: center;
+}
+
+.admin-productos-container .productos-table {
+    border-collapse: collapse;
+    margin-top: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+}
+
+.admin-productos-container .productos-table th, .admin-productos-container .productos-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.admin-productos-container .productos-table th{
+    background-color: $colorPrimario !important;
+    color: $colorSecundario !important;
+}

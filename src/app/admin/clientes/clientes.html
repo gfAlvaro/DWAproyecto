@@ -1,5 +1,6 @@
+<div class="clientes-container">
 <h2>Clientes</h2>
-<table>
+<table class="clientes-table">
   <thead>
     <tr>
       <th>ID</th>
@@ -12,14 +13,15 @@
   </thead>
   <tbody>
   @for (cliente of (clientes$ | async ); track cliente.clienteID) {
-      <tr>
-        <td>{{ cliente['clienteID'] }}</td>
-        <td>{{ cliente['nombre'] }}</td>
-        <td>{{ cliente['apellido'] }}</td>
-        <td>{{ cliente['email'] }}</td>
-        <td>{{ cliente['telefono'] }}</td>
-        <td>{{ cliente['direccion'] }}</td> 
-      </tr>
-    }
+    <tr>
+      <td>{{ cliente['clienteID'] }}</td>
+      <td>{{ cliente['nombre'] }}</td>
+      <td>{{ cliente['apellido'] }}</td>
+      <td>{{ cliente['email'] }}</td>
+      <td>{{ cliente['telefono'] }}</td>
+      <td>{{ cliente['direccion'] }}</td> 
+    </tr>
+  }
   </tbody>
 </table>
+</div>
