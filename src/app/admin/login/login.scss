@@ -1,11 +1,50 @@
 .admin-login {
-    text-align: center;
-}
 
-input {
-    margin-bottom: 10px;
+  text-align: center;
+
+  .login-error {
+    display: block;
+    width: 50%;
+    margin: 10px auto;
+    padding: 12px;
+    color: #b00020;
+    background-color: #ffe5e5;
+    border: 1px solid #b00020;
+    border-radius: 8px;
+    font-weight: bold;
+  }
 }
 
 img {
     margin-top: 10rem;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+    
+input {
+    width: 50%;
+    border: 1px solid grey;
+    background-color: #eeeeee;
+    margin-bottom: 10px;
+
+}
+
+input, button {
+    padding: 1.5em;
+    margin: 1.5em;
+    border-radius: 1em;
+}
+
+button {
+    color: white;
+    background-color: black;
+    border: 1px solid black;
 }

@@ -1,0 +1,10 @@
+@use '../../../variables.scss' as *;
+
+button {
+    color: $colorSecundario;
+    background-color: $colorPrimario;
+    border: 1px solid black;
+    padding: 1.5em;
+    margin: 1.5em;
+    border-radius: 1em;
+}

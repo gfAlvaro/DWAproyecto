@@ -7,9 +7,11 @@
     <div class="campo">
       <input type="password" name="password" [(ngModel)]="password" autocomplete="current-password" placeholder="Contraseña" >
     </div>
-    <div *ngIf="error">
-      {{ error }}
-    </div>
+    @if (error) {
+      <div class="login-error" role="alert">
+        {{ error }}
+      </div>
+    }
     <button type="submit" [disabled]="cargando">
       {{ cargando ? 'Entrando...' : 'Iniciar sesión' }}
     </button>

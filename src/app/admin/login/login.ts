@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { Meta } from '@angular/platform-browser';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-admin-login',
@@ -26,7 +27,8 @@ export class Login {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private meta: Meta
+    private meta: Meta,
+    private cdr: ChangeDetectorRef
   ) {}
 
   // dexindexar el acceso a la página de login para que no aparezca en los motores de búsqueda
@@ -51,8 +53,9 @@ export class Login {
         this.router.navigate(['/admin/dashboard']);
       },
       error: (error) => {
-        this.cargando = false;
-        this.error = error.error?.mensaje || 'Error al iniciar sesión';
+      this.cargando = false;
+      this.error = error.error?.mensaje || 'Error al iniciar sesión';
+      this.cdr.detectChanges();
       }
     });
   }

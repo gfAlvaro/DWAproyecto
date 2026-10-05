@@ -1,17 +1,32 @@
 <div class="admin-login">
   <img src="img/logo.png" alt="Logo" width="200">
+  <p>Inicie sesión como administrador:</p>
   <form (ngSubmit)="login()">
-    <div>
-      <label>Email: </label>
-      <input type="email" name="email" [(ngModel)]="email" autocomplete="username">
+    <div class="campo">
+      <input
+        id="email"
+        type="email"
+        name="email"
+        [(ngModel)]="email"
+        autocomplete="username"
+        placeholder="correo electrónico"
+      >
     </div>
-    <div>
-      <label>Contraseña: </label>
-      <input type="password" name="password" [(ngModel)]="password" autocomplete="current-password">
+    <div class="campo">
+      <input
+        id="password"
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        autocomplete="current-password"
+        placeholder="contraseña"
+      >
     </div>
-    <div *ngIf="error">
-      {{ error }}
-    </div>
+    @if (error) {
+      <div class="login-error" role="alert">
+        {{ error }}
+      </div>
+    }
     <button type="submit" [disabled]="cargando">
       {{ cargando ? 'Entrando...' : 'Iniciar sesión' }}
     </button>

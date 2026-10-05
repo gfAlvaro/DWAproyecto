@@ -5,6 +5,18 @@
   flex-direction: column;
   justify-content: center; // Centra horizontalmente
   align-items: center;     // Centra verticalmente
+
+  .login-error {
+    display: block;
+    width: 50%;
+    margin: 10px auto;
+    padding: 12px;
+    color: #b00020;
+    background-color: #ffe5e5;
+    border: 1px solid #b00020;
+    border-radius: 8px;
+    font-weight: bold;
+  }
 }
 
 a {

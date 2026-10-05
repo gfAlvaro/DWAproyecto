@@ -651,7 +651,7 @@ app.post('/api/cliente/login', (req, res) => {
     }
 
     if (resultados.length === 0) {
-      return res.status(401).json({ mensaje: 'Credenciales incorrectas' });
+      return res.status(401).json({ mensaje: 'Email o contraseña incorrectos' });
     }
 
     const cliente = resultados[0];
