@@ -1,52 +1,243 @@
 @use '../../variables.scss' as *;
 
+/* HEADER GENERAL */
+:host {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+}
+
 header {
     color: $colorSecundario;
     background-color: $colorPrimario;
-    height: 80px;
+    min-height: 80px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding-bottom: 10px;
-    padding-top: 10px;
+    justify-content: space-between;
+    padding: 10px $margenExterior;
+    z-index: 100;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    position: relative;
 }
 
-header>a:first-child {
-    margin-left: $margenExterior;
-    margin-right: auto;   
+/* LOGO */
+header > a:first-child {
+    margin-right: auto;
+    flex-shrink: 0;
 }
 
-header a:first-child img {
+header > a:first-child img {
     width: 80px;
     height: auto;
+    display: block;
 }
 
+/* ==============================
+   CONTENIDO DEL HEADER
+================================= */
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-width: 0;
+}
+
+/* ==============================
+   NAVEGACIÓN
+================================= */
+
 header nav {
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 header nav ul {
     display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-ul li {
-    padding: 2rem;
+header nav ul li {
+    padding: 1rem;
     text-align: center;
 }
 
-header a:last-child {
+header nav a {
     color: $colorSecundario;
-    background-color: $colorPrimario;    
+    text-decoration: none;
+    white-space: nowrap;
 }
 
-header>a:last-child {
-    border: 1px solid $colorSecundario;
-    text-align: center;
-    align-content: center;
+/* ==============================
+   ACCIONES: CARRITO Y USUARIO
+================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-actions a {
+    color: $colorSecundario;
+    background-color: $colorPrimario;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* CARRITO */
+
+.badge {
+    background-color: #e63946;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 12px;
+}
+
+.total-precio {
+    font-size: 14px;
+}
+
+/* ==============================
+   BOTÓN HAMBURGUESA
+================================= */
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
     justify-content: center;
-    padding: 1.5em;
-    border-radius: 1em;
-    margin-left: auto;   
-    margin-right: $margenExterior;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.menu-toggle span {
+    width: 27px;
+    height: 3px;
+    background-color: $colorSecundario;
+    border-radius: 3px;
+}
+
+/* ==============================
+   TABLETS Y MÓVILES
+================================= */
+
+@media (max-width: 1000px) {
+
+    header {
+        min-height: 80px;
+        padding: 10px 20px;
+        justify-content: space-between;
+    }
+
+    /* Logo */
+
+    header > a:first-child {
+        margin: 0;
+    }
+
+    /* Botón hamburguesa */
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    /* Menú desplegable */
+
+    .header-content {
+        display: none;
+
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+
+        width: 100%;
+        max-width: 100%;
+
+        background-color: $colorPrimario;
+
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 20px;
+        padding: 20px;
+
+        box-sizing: border-box;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Mostrar menú al pulsar */
+
+    .header-content.active {
+        display: flex;
+    }
+
+    /* Navegación vertical */
+
+    header nav {
+        width: 100%;
+        margin: 0;
+    }
+
+    header nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    header nav ul li {
+        padding: 10px;
+    }
+
+    /* Carrito y autenticación */
+
+    .header-actions {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .header-actions a {
+        white-space: normal;
+        text-align: center;
+    }
+
+    .total-precio {
+        font-size: 13px;
+    }
+}
+
+/* ==============================
+   MÓVILES PEQUEÑOS
+================================= */
+
+@media (max-width: 400px) {
+
+    header {
+        padding: 10px 15px;
+    }
+
+    header > a:first-child img {
+        width: 65px;
+    }
+
+    .header-content {
+        padding: 15px 10px;
+    }
 }

@@ -1,21 +1,42 @@
 <header>
-    <a href="/"><img src="img/logo.png" alt="logo"></a>
-    <nav>
-        <ul>
-            <li><a routerLink="/">Inicio</a></li>
-            <li><a routerLink="/sobre-nosotros">Sobre nosotros</a></li>
-            <li><a routerLink="/productos">Productos</a></li>
-            <li><a routerLink="/contacto">Contacto</a></li>
-        </ul>
-    </nav>
-    @if (estaAutenticado) {
-      <a [routerLink]="['/mi-cuenta/carrito']">
-        🛒 <span class="badge">{{ cartService.totalProductos() }}</span>
-        <span class="total-precio">({{ cartService.precioTotal() | currency:'EUR':'symbol':'1.2-2' }})</span>
-      </a>
-      <a routerLink="/mi-cuenta">Mi Cuenta</a>
-    } @else {
-      <a routerLink="/registro">Registrarse</a>
-      <a routerLink="/login">Iniciar Sesión</a>
-    }
+    <a href="/">
+        <img src="img/logo.png" alt="logo">
+    </a>
+
+    <button class="menu-toggle"
+            (click)="menuAbierto = !menuAbierto"
+            [attr.aria-expanded]="menuAbierto"
+            aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="header-content" [class.active]="menuAbierto">
+
+        <nav>
+            <ul>
+                <li><a routerLink="/" (click)="menuAbierto = false">Inicio</a></li>
+                <li><a routerLink="/sobre-nosotros" (click)="menuAbierto = false">Sobre nosotros</a></li>
+                <li><a routerLink="/productos" (click)="menuAbierto = false">Productos</a></li>
+                <li><a routerLink="/contacto" (click)="menuAbierto = false">Contacto</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            @if (estaAutenticado) {
+                <a [routerLink]="['/mi-cuenta/carrito']">
+                    🛒 <span class="badge">{{ cartService.totalProductos() }}</span>
+                    <span class="total-precio">
+                        ({{ cartService.precioTotal() | currency:'EUR':'symbol':'1.2-2' }})
+                    </span>
+                </a>
+                <a routerLink="/mi-cuenta">Mi Cuenta</a>
+            } @else {
+                <a routerLink="/registro">Registrarse</a>
+                <a routerLink="/login">Iniciar Sesión</a>
+            }
+        </div>
+
+    </div>
 </header>

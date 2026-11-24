@@ -13,6 +13,8 @@ import { CurrencyPipe } from '@angular/common';
 
 export class Header {
 
+  menuAbierto = false;
+
   constructor(
     private authService: AuthService,
     public cartService: CartService

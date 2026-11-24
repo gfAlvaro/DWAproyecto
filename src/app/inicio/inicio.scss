@@ -2,25 +2,42 @@
 
 $margin: 40px;
 
+/* ESTILOS GENERALES */
 article {
     display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 article img {
-    width: 600px;
+    width: 50%;
+    max-width: 50%;
+    min-width: 0;
     height: auto;
+    display: block;
+    object-fit: cover;
 }
 
 article a {
     background-color: $colorPrimario;
     padding: 10px;
     border-radius: 10px;
+    display: inline-block;
+}
+
+article .columna {
+    min-width: 0;
 }
 
 article .columna p {
     margin-bottom: $margin;
 }
 
+/* DISTRIBUCIÓN DE SECCIONES */
 .section1 {
     margin-top: -10px;
 }
@@ -32,11 +49,13 @@ article .columna p {
 
 .section2 {
     margin-left: $margenExterior;
+    margin-right: -10px;
 }
 
-.section1 .columna, .section3 .columna {
+.section1 .columna,
+.section3 .columna {
     margin-left: $margin;
-    margin-right: auto;
+    margin-right: 8em;
     align-content: center;
 }
 
@@ -44,4 +63,181 @@ article .columna p {
     margin-left: auto;
     margin-right: $margin;
     align-content: center;
+}
+
+/* ANIMACIONES */
+@media (min-width: 901px) {
+
+    .section {
+        opacity: 1;
+        transform: none;
+    }
+
+    .section1.visible {
+        animation: aparecerDesdeIzquierda 1s ease-out both;
+    }
+
+    .section2.visible {
+        animation: aparecerDesdeDerecha 1s ease-out both;
+    }
+
+    .section3.visible {
+        animation: aparecerDesdeIzquierda 1s ease-out both;
+    }
+}
+
+/* TABLETS */
+@media (min-width: 601px) and (max-width: 900px) {
+
+    article {
+        align-items: center;
+        width: 100%;
+        margin: 0;
+    }
+
+    article img {
+        width: 45%;
+        max-width: 45%;
+        height: auto;
+        flex: 0 0 45%;
+    }
+
+    article .columna {
+        width: 55%;
+        flex: 0 0 55%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .section1 .columna,
+    .section3 .columna {
+        margin: 0;
+        padding-left: 25px;
+    }
+
+    .section2 .columna {
+        margin: 0;
+        padding-right: 25px;
+    }
+
+    article .columna h2 {
+        font-size: 1.8rem;
+    }
+
+    article .columna p {
+        font-size: 0.95rem;
+    }
+}
+
+/* MÓVILES */
+@media (max-width: 600px) {
+
+    /* SECCIONES */
+    .section {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        width: 100%;
+        max-width: 100%;
+
+        margin: 0;
+        padding: 0;
+
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .section1 {
+        margin-top: 0;
+    }
+
+    .section1,
+    .section3,
+    .section2 {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+
+    .section2 {
+        flex-direction: column-reverse;
+    }
+
+    /* IMÁGENES */
+    .section img {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 0;
+        align-self: stretch;
+        object-fit: cover;
+        box-sizing: border-box;
+    }
+
+    /* COLUMNAS DE TEXTO */
+    .section .columna {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        align-content: center;
+    }
+
+    /* TÍTULOS */
+    .section .columna h2 {
+        font-size: 1.7rem;
+        line-height: 1.2;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
+
+    /* PÁRRAFOS */
+    .section .columna p {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
+
+    /* BOTONES */
+    .section .columna a {
+        display: inline-block;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        overflow-wrap: break-word;
+        text-align: center;
+    }
+}
+
+/* MÓVILES PEQUEÑOS */
+@media (max-width: 400px) {
+
+    .section2 {
+        flex-direction: row-reverse;
+    }
+
+    .section .columna {
+        padding: 15px;
+    }
+
+    .section .columna h2 {
+        font-size: 1.5rem;
+    }
+
+    .section .columna p {
+        font-size: 0.95rem;
+    }
+
+    .section .columna a {
+        font-size: 0.8rem;
+    }
 }
