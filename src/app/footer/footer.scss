@@ -63,3 +63,27 @@ footer-after img{
     width: 21px !important;
     height: auto;
 }
+
+@media (max-width: 1000px) {
+    .footer-main {
+        width: 100%;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    .footer-after {
+        flex-direction: column;
+        align-items: center;
+        padding-left: 0;
+    }
+
+    .footer-after ul {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .firma {
+        display: flex;
+        flex-direction: column;
+    }
+}
