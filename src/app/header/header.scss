@@ -105,6 +105,15 @@ header nav a {
     font-size: 14px;
 }
 
+.sesionbtn {
+    background-color: $colorPrimario;
+    border: 2px solid $colorSecundario;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
 /* ==============================
    BOTÓN HAMBURGUESA
 ================================= */
